@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zkkj.backend.dao.mybatis.mapper.AuthorityPrivilegeMapper">
+	<resultMap id="BaseResultMap" type="com.zkkj.backend.entity.AuthorityPrivilege">
+		<id column="privilegeId" property="privilegeId" jdbcType="INTEGER" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="intro" property="intro" jdbcType="VARCHAR" />
+		<result column="urlPattern" property="urlPattern" jdbcType="VARCHAR" />
+		<result column="method" property="method" jdbcType="VARCHAR" />
+		<result column="groupId" property="groupId" jdbcType="INTEGER" />
+		<result column="status" property="status" jdbcType="VARCHAR" />
+		<result column="addedTime" property="addedTime" jdbcType="TIMESTAMP" />
+		<result column="updateTime" property="updateTime" jdbcType="TIMESTAMP" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		privilegeId, name, intro, urlPattern, method, groupId, status, addedTime,
+		updateTime
+	</sql>
+	<sql id="Column_List_by_roleId">
+		privilegeId,urlPattern, method
+	</sql>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from authority_privilege
+		where privilegeId = #{privilegeId,jdbcType=INTEGER}
+	</select>
+	<select id="queryAuthorityPrivilegeList" parameterType="com.zkkj.backend.entity.AuthorityPrivilege"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from authority_privilege
+		<where>
+			<if test="name!=null and name != ''">
+				name = #{name,jdbcType=VARCHAR}
+			</if>
+			<if test="groupId != null ">
+				and groupId = #{groupId,jdbcType=INTEGER}
+			</if>
+			<if test="status != null and status != ''">
+				and status = #{status,jdbcType=VARCHAR}
+			</if>
+		</where>
+	</select>
+	
+	<select id="getRoleOwnedPrivilegeList" parameterType="int" resultMap="BaseResultMap">
+		  SELECT
+			a.privilegeId,
+			a. NAME,
+			a. STATUS,
+			a.addedTime,
+			a.updateTime
+		  FROM
+			authority_privilege a,
+			authority_role_privilege b
+		  WHERE
+			a.privilegeId = b.privilegeId
+		    AND b.roleId = #{value,jdbcType=INTEGER}	    
+	 </select>   
+  
+	<select id="getPrivilegeListByRoleId" parameterType="java.lang.Integer"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Column_List_by_roleId" />
+		from authority_privilege
+		where status ='1' and privilegeId
+		in (select privilegeId from authority_role_privilege where roleId =
+		#{roleId,jdbcType=INTEGER})
+	</select>
+
+
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from authority_privilege
+		where privilegeId = #{privilegeId,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert" parameterType="com.zkkj.backend.entity.AuthorityPrivilege">
+		<selectKey resultType="java.lang.Integer" keyProperty="privilegeId"
+			order="AFTER">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+		insert into authority_privilege (privilegeId, name, intro,
+		urlPattern, method, groupId,
+		status, addedTime, updateTime
+		)
+		values (#{privilegeId,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR},
+		#{intro,jdbcType=VARCHAR},
+		#{urlPattern,jdbcType=VARCHAR}, #{method,jdbcType=VARCHAR}, #{groupId,jdbcType=INTEGER},
+		#{status,jdbcType=VARCHAR}, now(), now()
+		)
+	</insert>
+	<insert id="insertSelective" parameterType="com.zkkj.backend.entity.AuthorityPrivilege">
+		<selectKey resultType="java.lang.Integer" keyProperty="privilegeId"
+			order="AFTER">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+		insert into authority_privilege
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			privilegeId,
+			<if test="name != null">
+				name,
+			</if>
+			<if test="intro != null">
+				intro,
+			</if>
+			<if test="urlPattern != null">
+				urlPattern,
+			</if>
+			<if test="method != null">
+				method,
+			</if>
+			<if test="groupId != null">
+				groupId,
+			</if>
+			<if test="status != null">
+				status,
+			</if>
+			<if test="addedTime != null">
+				addedTime,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			#{privilegeId,jdbcType=INTEGER},
+			<if test="name != null">
+				#{name,jdbcType=VARCHAR},
+			</if>
+			<if test="intro != null">
+				#{intro,jdbcType=VARCHAR},
+			</if>
+			<if test="urlPattern != null">
+				#{urlPattern,jdbcType=VARCHAR},
+			</if>
+			<if test="method != null">
+				#{method,jdbcType=VARCHAR},
+			</if>
+			<if test="groupId != null">
+				#{groupId,jdbcType=INTEGER},
+			</if>
+			<if test="status != null">
+				#{status,jdbcType=VARCHAR},
+			</if>
+			<if test="addedTime != null">
+				#{addedTime,jdbcType=TIMESTAMP},
+			</if>
+			now()
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.zkkj.backend.entity.AuthorityPrivilege">
+		update authority_privilege
+		<set>
+			<if test="name != null">
+				name = #{name,jdbcType=VARCHAR},
+			</if>
+			<if test="intro != null">
+				intro = #{intro,jdbcType=VARCHAR},
+			</if>
+			<if test="urlPattern != null">
+				urlPattern = #{urlPattern,jdbcType=VARCHAR},
+			</if>
+			<if test="method != null">
+				method = #{method,jdbcType=VARCHAR},
+			</if>
+			<if test="groupId != null">
+				groupId = #{groupId,jdbcType=INTEGER},
+			</if>
+			<if test="status != null">
+				status = #{status,jdbcType=VARCHAR},
+			</if>
+			updateTime = now()
+		</set>
+		where privilegeId = #{privilegeId,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.zkkj.backend.entity.AuthorityPrivilege">
+		update authority_privilege
+		set name = #{name,jdbcType=VARCHAR},
+		intro = #{intro,jdbcType=VARCHAR},
+		urlPattern = #{urlPattern,jdbcType=VARCHAR},
+		method = #{method,jdbcType=VARCHAR},
+		groupId = #{groupId,jdbcType=INTEGER},
+		status = #{status,jdbcType=VARCHAR},
+		updateTime = now()
+		where privilegeId = #{privilegeId,jdbcType=INTEGER}
+	</update>
+</mapper>

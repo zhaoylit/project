@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zj.web.modules.shop.dao.ShopMapper" >
+  <!-- <cache readOnly="true">
+    <property name="timeToIdleSeconds" value="36000"/>  
+    <property name="timeToLiveSeconds" value="36000"/>
+    <property name="maxEntriesLocalHeap" value="1000"/>  
+    <property name="maxEntriesLocalDisk" value="10000000"/>  
+    <property name="memoryStoreEvictionPolicy" value="LRU"/>  
+   </cache> -->
+  <!--    查询列表 -->
+  <select id="selectList" resultType="java.util.Map" parameterType="java.util.Map">
+    SELECT ag.*
+    ,CASE 
+    	WHEN ag.status = '1' THEN '有效'
+    	WHEN ag.status = '0' THEN '无效'
+    END AS statusShow
+    ,date_format(ag.addedTime,'%Y-%m-%d %H:%i:%s') as addedTimeShow
+    FROM app_shop ag
+    WHERE ag.`status` = 1
+    ORDER BY ag.addedTime DESC
+  </select>
+  <!--   查询列表数量 -->
+  <select id="selectCount" parameterType ="java.util.Map" resultType="java.lang.Integer">
+    SELECT count(*)
+    FROM app_shop ag
+    WHERE ag.`status` = 1
+  </select>
+  <!--   单条 -->
+  <select id="selectOne" parameterType="java.util.Map" resultType="java.util.Map">
+   SELECT ag.*
+    ,CASE 
+    	WHEN ag.status = '1' THEN '有效'
+    	WHEN ag.status = '0' THEN '无效'
+    END AS statusShow
+	,tui.trueName
+    FROM app_shop ag
+    LEFT JOIN tb_user_info tui ON tui.userId = ag.userId
+    WHERE ag.`status` = 1
+    <if test="id != null and id != ''">
+     and ag.id = #{id}
+    </if>
+  </select>
+  <!-- 添加 -->
+  <insert id="insert" parameterType="java.util.Map"  useGeneratedKeys="true" keyProperty="id">
+    INSERT INTO app_shop (
+        userId,
+		shopName,
+		imageUrl,
+		mobile,
+		phone,
+		address,
+		addedTime,
+		remark
+	)
+	VALUES
+		(
+			#{userId,jdbcType=INTEGER},
+			#{shopName,jdbcType=VARCHAR}, 
+			#{imageUrl,jdbcType=VARCHAR}, 
+			#{mobile,jdbcType=VARCHAR}, 
+			#{phone,jdbcType=VARCHAR}, 
+			#{address,jdbcType=VARCHAR},
+			now(), 
+			#{remark,jdbcType=DECIMAL}
+		)
+  </insert>
+ <!--   更新 -->
+ <update id="updateByPrimaryKeySelective" parameterType="java.util.Map" >
+    update app_shop
+    <set >
+      <if test="userId != null" >
+      userId = #{userId,jdbcType=INTEGER}, 
+      </if>
+      <if test="shopName != null" >
+      shopName = #{shopName,jdbcType=VARCHAR}, 
+      </if>
+      <if test="imageUrl != null" >
+	  imageUrl = #{imageUrl,jdbcType=VARCHAR}, 
+      </if>
+      <if test="mobile != null" >
+	  mobile = #{mobile,jdbcType=VARCHAR}, 
+      </if>
+      <if test="phone != null" >
+	  phone = #{phone,jdbcType=VARCHAR}, 
+      </if>
+      <if test="address != null" >
+	  address = #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+	  remark =  #{remark,jdbcType=DECIMAL}
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <!--   删除 -->
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    update app_shop set status = 0
+    where id in 
+    <foreach collection="array" open="(" separator="," close=")" item="id">
+    	#{id}
+    </foreach>
+  </delete>
+  <!--   查询认证过得用户列表  -->
+  
+</mapper>

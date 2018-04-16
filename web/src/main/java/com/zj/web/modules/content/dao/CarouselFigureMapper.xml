@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zj.web.modules.content.dao.CarouselFigureMapper" >
+  <cache readOnly="true">
+    <property name="timeToIdleSeconds" value="36000"/>  
+    <property name="timeToLiveSeconds" value="36000"/>
+    <property name="maxEntriesLocalHeap" value="1000"/>  
+    <property name="maxEntriesLocalDisk" value="10000000"/>  
+    <property name="memoryStoreEvictionPolicy" value="LRU"/>  
+   </cache>
+  <!--    查询列表 -->
+  <select id="selectList" resultType="java.util.Map" parameterType="java.util.Map">
+    SELECT tcf.*
+    ,CASE 
+    	WHEN tcf.status = '1' THEN '有效'
+    	WHEN tcf.status = '0' THEN '无效'
+     END AS statusShow
+    ,CASE 
+    	WHEN tcf.platform = 'all' THEN '全平台' 
+    	WHEN tcf.platform = 'android' THEN '安卓' 
+    	WHEN tcf.platform = 'ios' THEN '苹果' 
+     END AS platformShow
+    ,date_format(tcf.addedTime,'%Y-%m-%d %H:%i%s:') as addedTimeShow
+    FROM tb_carousel_figure tcf
+    WHERE tcf.`status` = 1
+    <if test="platform != null and platform != ''">
+     and tcf.platform = #{platform}
+    </if>
+    ORDER BY tcf.`order` ASC
+  </select>
+  <!--   查询列表数量 -->
+  <select id="selectCount" parameterType ="java.util.Map" resultType="java.lang.Integer">
+    SELECT count(*)
+    FROM tb_carousel_figure tcf
+    WHERE tcf.`status` = 1
+    <if test="platform != null and platform != ''">
+     and tcf.platform = #{platform}
+    </if>
+  </select>
+  <!--   单条 -->
+  <select id="selectOne" parameterType="java.util.Map" resultType="java.util.Map">
+  SELECT tcf.*
+    ,CASE 
+    	WHEN tcf.status = '1' THEN '有效'
+    	WHEN tcf.status = '0' THEN '无效'
+     END AS statusShow
+    ,CASE 
+    	WHEN tcf.platform = 'all' THEN '全平台' 
+    	WHEN tcf.platform = 'android' THEN '安卓' 
+    	WHEN tcf.platform = 'ios' THEN '苹果' 
+     END AS platformShow
+    FROM tb_carousel_figure tcf
+    WHERE tcf.`status` = 1
+    <if test="id != null and id != ''">
+     and id = #{id}
+    </if>
+  </select>
+  <!-- 添加 -->
+  <insert id="insert" parameterType="java.util.Map"  useGeneratedKeys="true" keyProperty="id">
+    insert into tb_carousel_figure (imageUrl, clickUrl, 
+      `order`, `status`, platform
+    )
+    values (#{imageUrl,jdbcType=VARCHAR}, #{clickUrl,jdbcType=VARCHAR}, 
+      #{order,jdbcType=INTEGER},#{status,jdbcType=INTEGER},#{platform,jdbcType=VARCHAR}
+    )
+  </insert>
+ <!--   更新 -->
+ <update id="updateByPrimaryKeySelective" parameterType="java.util.Map" >
+    update tb_carousel_figure
+    <set >
+      <if test="imageUrl != null and imageUrl != ''" >
+        imageUrl = #{imageUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="clickUrl != null and clickUrl != ''" >
+        clickUrl = #{clickUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="order != null and order != ''" >
+        `order` = #{order,jdbcType=INTEGER},
+      </if>
+      <if test="status != null and status != ''" >
+        `status` = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="platform != null and platform != ''" >
+        platform = #{platform,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <!--   删除 -->
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from tb_carousel_figure
+    where id in 
+    <foreach collection="array" open="(" separator="," close=")" item="id">
+    	#{id}
+    </foreach>
+  </delete>
+</mapper>

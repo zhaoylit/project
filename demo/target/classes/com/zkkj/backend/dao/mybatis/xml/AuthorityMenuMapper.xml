@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zkkj.backend.dao.mybatis.mapper.AuthorityMenuMapper">
+  <resultMap id="BaseResultMap" type="com.zkkj.backend.entity.AuthorityMenu">
+    <id column="menuId" jdbcType="INTEGER" property="menuId" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="alias" jdbcType="VARCHAR" property="alias" />
+    <result column="parentId" jdbcType="INTEGER" property="parentId" />
+    <result column="level" jdbcType="INTEGER" property="level" />
+    <result column="menuURL" jdbcType="VARCHAR" property="menuURL" />
+    <result column="index" jdbcType="INTEGER" property="index" />
+    <result column="visible" jdbcType="VARCHAR" property="visible" />
+    <result column="addedTime" jdbcType="TIMESTAMP" property="addedTime" />
+    <result column="updateTime" jdbcType="TIMESTAMP" property="updateTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    menuId, name, alias, parentId, `level`, menuURL, `index`, visible, addedTime, updateTime
+  </sql>
+  <select id="queryAuthorityMenuList" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+	   select 
+	    <include refid="Base_Column_List" />
+	    from authority_menu
+	    <choose>
+	      <when test="value != null">
+	      	 where parentId = #{value,jdbcType=INTEGER} order by `index`,menuId
+	      </when>
+	      <otherwise>
+	     	  where parentId is null order by `index`,menuId
+	      </otherwise>
+	    </choose>
+  </select>
+  
+  <select id="queryAuthorityByName" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from authority_menu
+    where name = #{value,jdbcType=VARCHAR}
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from authority_menu
+    where menuId = #{menuId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from authority_menu
+    where menuId = #{menuId,jdbcType=INTEGER} or parentId = #{menuId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.zkkj.backend.entity.AuthorityMenu">
+    <selectKey keyProperty="menuId" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into authority_menu (menuId, name, alias, 
+      parentId, `level`, menuURL, 
+      `index`, visible, addedTime, 
+      updateTime)
+    values (#{menuId,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{alias,jdbcType=VARCHAR}, 
+      #{parentId,jdbcType=INTEGER}, #{level,jdbcType=INTEGER}, #{menuURL,jdbcType=VARCHAR}, 
+      #{index,jdbcType=INTEGER}, #{visible,jdbcType=VARCHAR}, now(), now())
+  </insert>
+  <insert id="insertSelective" parameterType="com.zkkj.backend.entity.AuthorityMenu">
+    <selectKey keyProperty="menuId" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into authority_menu
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      menuId,
+      <if test="name != null and name!=''">
+        name,
+      </if>
+      <if test="alias != null">
+        alias,
+      </if>
+      <if test="parentId != null">
+        parentId,
+      </if>
+      <if test="level != null">
+        `level`,
+      </if>
+      <if test="menuURL != null">
+        menuURL,
+      </if>
+      <if test="index != null">
+        `index`,
+      </if>
+      <if test="visible != null">
+        visible,
+      </if>
+        addedTime,updateTime
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      #{menuId,jdbcType=INTEGER},
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="alias != null">
+        #{alias,jdbcType=VARCHAR},
+      </if>
+      <if test="parentId != null">
+        #{parentId,jdbcType=INTEGER},
+      </if>
+      <if test="level != null">
+        #{level,jdbcType=INTEGER},
+      </if>
+      <if test="menuURL != null">
+        #{menuURL,jdbcType=VARCHAR},
+      </if>
+      <if test="index != null">
+        #{index,jdbcType=INTEGER},
+      </if>
+      <if test="visible != null">
+        #{visible,jdbcType=VARCHAR},
+      </if>
+       now(),now()
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zkkj.backend.entity.AuthorityMenu">
+    update authority_menu
+    <set>
+      <if test="name != null and name !=''">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="alias != null and alias !=''">
+        alias = #{alias,jdbcType=VARCHAR},
+      </if>
+      <if test="parentId != null">
+        parentId = #{parentId,jdbcType=INTEGER},
+      </if>
+      <if test="level != null">
+        `level` = #{level,jdbcType=INTEGER},
+      </if>
+      <if test="menuURL != null and menuURL !=''">
+        menuURL = #{menuURL,jdbcType=VARCHAR},
+      </if>
+      <if test="index != null">
+       	`index` = #{index,jdbcType=INTEGER},
+      </if>
+      <if test="visible != null and visible !=''">
+        visible = #{visible,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null">
+        updateTime = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where menuId = #{menuId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zkkj.backend.entity.AuthorityMenu">
+    update authority_menu
+    set name = #{name,jdbcType=VARCHAR},
+      alias = #{alias,jdbcType=VARCHAR},
+      parentId = #{parentId,jdbcType=INTEGER},
+      `level` = #{level,jdbcType=INTEGER},
+      menuURL = #{menuURL,jdbcType=VARCHAR},
+      `index` = #{index,jdbcType=INTEGER},
+      visible = #{visible,jdbcType=VARCHAR},
+      updateTime = now()
+    where menuId = #{menuId,jdbcType=INTEGER}
+  </update>
+  
+   <delete id="deleteRoleMenu" parameterType="map">
+    delete from authority_role_menu
+    where roleId = #{roleId} and menuId in
+     <foreach collection="list" index="index" item="item" open="(" separator="," close=")">  
+            #{item}  
+     </foreach>
+  </delete>
+  
+    <insert id="insertRoleMenu" parameterType="map">
+	    insert into authority_role_menu (roleId,menuId,status,addedTime)
+	    values  
+	     <foreach collection="list" index="index" item="item" open="" separator="," close="">  
+	           ( #{roleId}, #{item},'1',now())
+	     </foreach>
+   </insert>
+  
+</mapper>

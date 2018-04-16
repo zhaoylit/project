@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>扫码登录</title>
+    <meta name="content-type" content="text/html; charset=UTF-8"/>
+</head>
+<body>
+    <!--/*@thymesVar id="name" type="java.lang.String"*/-->
+    <script src="/js/aes.js"></script> 
+    
+    <script th:inline="javascript">
+        var guid;
+        /*<![CDATA[*/
+        var url = /*[[${returnPath}]]*/;
+    	/*]]>*/
+    	 /*<![CDATA[*/
+        var socket_url = /*[[${socketUrl}]]*/;
+    	/*]]>*/
+    	
+	    if(typeof(WebSocket) == "undefined") {
+	        alert("您的浏览器不支持WebSocket");
+	    }else{
+	    	guid = guid();
+	    	var socket;
+	        initSocket();
+	    }
+	    function initSocket(){
+        	socket = new WebSocket(socket_url + "?guid=" + guid);
+            /*
+             *监听三种状态的变化 。js会回调
+             */
+            socket.onopen = function(message) {
+               console.log("-----------------connect open");
+               //客户端连接成功,向后台发送心跳检测,每隔10秒发送一次
+         	   setInterval(function (){
+         	        var json = {};
+         	     	//定义json 发送消息  
+         	        var json = {};
+         	        json.guid = guid;
+         	        json.messageType = "beat";//心跳消息
+         	        socket.send(JSON.stringify(json));
+         	   },3000);
+            };
+            socket.onclose = function(message) {
+            	console.log("-----------------connect close");
+            	socket.close();
+            };
+            socket.onmessage = function(message) {
+              var json = JSON.parse(message.data);
+              var messageType = json.messageType;
+              switch(messageType){
+              	case "qrcode": {
+            		  var element = document.getElementById('myimage');
+              		  element.src = "data:image/jpg;base64," + Decrypt(json.base64);
+              		  element.style.display = "block";
+              		  document.getElementById('divShow').style.display = "block";
+              	}
+              	break;
+              	case "scanResult": {
+              		  var uuid = json.uuid;//uuid
+              		  var status = json.status;//扫码状态，0.未扫码，1.扫码成功
+              		  if(status == ""){//二维码过期
+	              		  var element = document.getElementById('tishi');
+	     	      	      element.src="/img/timeout.png";
+	     	        	  element.style.display = "block";
+              			  alert("二维码超时");
+              			  
+              		  }else if(status == "1"){//扫码成功
+     	      			var element = document.getElementById('tishi');
+     	      			element.src="/img/duihao.jpg";
+     	        		element.style.display = "block";
+     	        		/*
+     	        		    此处存cokies
+     	        		*/
+     	        		
+     	      			//扫码成功，跳转成功
+     	      			 setTimeout(function(){
+         	      			location.href=url+"socket/success/"+guid;
+     	      			},3000);
+     	      		 }else if(status == "2"){//重复扫码
+     	      			 alert("重复扫码");
+     	      		 }
+              	}
+              	break;
+              }
+            };
+            socket.onerror = function(message) {
+            	console.log("-----------------connect error:" + JSON.stringify(message));
+            	socket.close();
+            };
+        }
+    	function S4() {
+   		   return (((1+Math.random())*0x10000)|0).toString(16).substring(1);
+   		}
+    	//生成唯一guid
+   		function guid() {
+   		   return (S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4());
+   		}
+   		//加密
+    	function Encrypt(word){  
+            var key = CryptoJS.enc.Utf8.parse("abcdefgabcdefg12");   
+     
+            var srcs = CryptoJS.enc.Utf8.parse(word);  
+            var encrypted = CryptoJS.AES.encrypt(srcs, key, {mode:CryptoJS.mode.ECB,padding: CryptoJS.pad.Pkcs7});  
+            return encrypted.toString();  
+       }  
+   	   //解密
+       function Decrypt(word){  
+            var key = CryptoJS.enc.Utf8.parse("abcdefgabcdefg12");   
+     
+            var decrypt = CryptoJS.AES.decrypt(word, key, {mode:CryptoJS.mode.ECB,padding: CryptoJS.pad.Pkcs7});  
+            return CryptoJS.enc.Utf8.stringify(decrypt).toString();  
+       }  
+    </script>
+    <div id="divShow" style="width:200px;height:230px;border:1px solid black;display:none;margin-left:200px;margin:0 auto;margin-top:100px;">
+    	<img id="tishi" src="/img/duihao.jpg" style="width:50px;height:50px;position:absolute;margin:75px 0 0 75px;display:none;"/>
+    	<img id="myimage" src="" style="width:200px;height:200px;"/>
+    	<div style="width:200px;height:25px;border:0px solid black;text-align:center;font-size:13px;">
+    		请打开客户端“扫一扫”
+    	</div>
+    </div>
+</body>
+</html>

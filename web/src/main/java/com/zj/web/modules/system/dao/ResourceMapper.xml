@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zj.web.modules.system.dao.ResourceMapper" >
+  <select id="getIconList" resultType="java.util.Map" parameterType="java.util.Map">
+    select * 
+    from tb_resource_icon
+    where 1 = 1
+  </select>
+  <select id="getIconListCount" resultType="java.lang.Integer" parameterType="java.util.Map">
+    select count(*) 
+    from tb_resource_icon
+    where 1 = 1
+  </select>
+  <select id="selectIconById" parameterType="java.lang.Integer" resultType="java.util.Map">
+  	select * 
+    from tb_resource_icon
+    where id= #{id}
+  </select>
+ <insert id="insert" parameterType="java.util.Map">
+ insert into tb_resource_icon(pid,resourceType,iconName,className,fileName,filePath,fileOldName,width)
+ values(#{pid},#{resourceType},#{iconName},#{className},#{fileName},#{filePath},#{fileOldName},#{width})
+ </insert>
+ <update id="updateById" parameterType="java.util.Map">
+ update tb_resource_icon
+ set id = id 
+ <if test="pid != null and pid != ''">
+ ,pid = #{pid}
+ </if>
+ <if test="resourceType != null and resourceType != ''">
+ ,resourceType = #{resourceType}
+ </if>
+ <if test="iconName != null and iconName != ''">
+ ,iconName = #{iconName}
+ </if>
+ <if test="className != null and className != ''">
+ ,className = #{className}
+ </if>
+ <if test="fileName != null and fileName != ''">
+ ,fileName = #{fileName}
+ </if>
+ <if test="width != null and width != ''">
+ ,width = #{width}		
+ </if>
+ <if test="filePath != null and filePath != ''">
+ ,filePath = #{filePath}		
+ </if>
+ <if test="fileOldName != null and fileOldName != ''">
+ ,fileOldName = #{fileOldName}		
+ </if>
+ where id = #{id,jdbcType=INTEGER}
+ </update>
+ <delete id="deletebyId" parameterType="java.lang.Integer">
+ delete from tb_resource_icon where find_in_set(id,#{ids}) > 0
+ </delete>
+ <!--  根据资源类型查询路径 -->
+ <select id="selectResourcePathByType" parameterType="java.lang.String" resultType="java.lang.String">
+ 	select resourcePath from tb_resource_path_config where resourceType = #{type}
+ </select>
+</mapper>

@@ -1,0 +1,382 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zkkj.backend.dao.mybatis.mapper.biz.NoticeFlightMapper" >
+  <resultMap id="BaseResultMap" type="com.zkkj.backend.entity.biz.NoticeFlight" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <id column="noticeId" property="noticeId" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="VARCHAR" />
+    <result column="flightNo" property="flightNo" jdbcType="VARCHAR" />
+    <result column="fs" property="fs" jdbcType="VARCHAR" />
+    <result column="depCity" property="depCity" jdbcType="VARCHAR" />
+    <result column="depCode" property="depCode" jdbcType="VARCHAR" />
+    <result column="arrCity" property="arrCity" jdbcType="VARCHAR" />
+    <result column="arrCode" property="arrCode" jdbcType="VARCHAR" />
+    <result column="passCity" property="passCity" jdbcType="VARCHAR" />
+    <result column="passCode" property="passCode" jdbcType="VARCHAR" />
+    <result column="gate" property="gate" jdbcType="VARCHAR" />
+    <result column="errorCode" property="errorCode" jdbcType="VARCHAR" />
+    <result column="location" property="location" jdbcType="VARCHAR" />
+    <result column="count" property="count" jdbcType="VARCHAR" />
+    <result column="delayRes" property="delayRes" jdbcType="VARCHAR" />
+    <result column="result" property="result" jdbcType="VARCHAR" />
+    <result column="resultCode" property="resultCode" jdbcType="VARCHAR" />
+    <result column="sendState" property="sendState" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="VARCHAR" />
+    <result column="operator" property="operator" jdbcType="VARCHAR" />
+    <result column="takeoffTime" property="takeoffTime" jdbcType="VARCHAR" />
+    <result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, noticeId, type, flightNo, fs, depCity, depCode, arrCity, arrCode, passCity, passCode, 
+    gate, errorCode, location, count, delayRes, result, resultCode, sendState, status, 
+    operator, takeoffTime, date_format(createTime,'%H:%i %m-%d') createTime
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+    from zkkj_notice_flight
+    where id = #{id,jdbcType=INTEGER}
+      and noticeId = #{noticeId,jdbcType=VARCHAR}
+  </select>
+    
+  <select id="getFlightNoticeListByDate" parameterType="map" resultType="map" >
+     select 
+    <include refid="Base_Column_List" />
+     from zkkj_notice_flight 
+     where createTime>=#{createTime} 
+     <if test="operator!=null and operator!=''">
+        and operator =#{operator}
+     </if>
+   	    order by createTime desc 
+     <if test="pages!=null and rows!=null">
+        limit ${pages},${rows}
+     </if>
+  </select>
+  
+  <select id="getFlightNoticeListByDateTotal" parameterType="map" resultType="int" >
+     select 
+     count(*) total
+     from zkkj_notice_flight 
+     where createTime>=#{createTime} 
+     <if test="operator!=null and operator!=''">
+        and operator =#{operator}
+     </if>   
+  </select>
+  
+  
+  <select id="getAllFlightNoticeList" parameterType="map" resultType="map" >
+    select 
+    <include refid="Base_Column_List" />
+     from zkkj_notice_flight 
+     where 1=1 
+     <if test="flightNo!=null and flightNo!=''">
+        and flightNo =#{flightNo}
+     </if>
+     <if test="beginTime!=null and beginTime!=''">
+	        and  date_format(createTime,'%Y-%m-%d %H:%i') &gt;=#{beginTime}
+	     </if>
+	      <if test="endTime!=null and endTime!=''">
+	        and  date_format(createTime,'%Y-%m-%d %H:%i') &lt;=#{endTime}
+	     </if>
+     <if test="operatorlist!=null">
+       and operator in 
+     <foreach collection="operatorlist" index="index" item="item" open="(" separator="," close=")">  
+            #{item}  
+     </foreach>  
+     </if>
+      order by createTime desc 
+     <if test="pages!=null and rows!=null">
+        limit ${pages},${rows}
+     </if>
+  </select>
+  
+   <select id="getNoticeFlightListTotal" parameterType="map" resultType="int" >
+	    select 
+	     count(*) total
+	     from zkkj_notice_flight 
+	     where 1=1 
+	     <if test="flightNo!=null and flightNo!=''">
+	        and flightNo =#{flightNo}
+	     </if>
+	     <if test="beginTime!=null and beginTime!=''">
+	        and  date_format(createTime,'%Y-%m-%d %H:%i') &gt;=#{beginTime}
+	     </if>
+	      <if test="endTime!=null and endTime!=''">
+	        and  date_format(createTime,'%Y-%m-%d %H:%i') &lt;=#{endTime}
+	     </if>
+	     <if test="operatorlist!=null">
+	       and operator in 
+	     <foreach collection="operatorlist" index="index" item="item" open="(" separator="," close=")">  
+	            #{item}  
+	     </foreach>  
+	     </if>
+	   
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="com.zkkj.backend.entity.biz.NoticeFlight" >
+    delete from zkkj_notice_flight
+    where id = #{id,jdbcType=INTEGER}
+      and noticeId = #{noticeId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.zkkj.backend.entity.biz.NoticeFlight" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into zkkj_notice_flight (id, noticeId, type, 
+      flightNo, fs, depCity, 
+      depCode, arrCity, arrCode, 
+      passCity, passCode, gate, 
+      errorCode, location, count, 
+      delayRes, result, resultCode, 
+      sendState, status, operator, 
+      takeoffTime, createTime)
+    values (#{id,jdbcType=INTEGER}, #{noticeId,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR}, 
+      #{flightNo,jdbcType=VARCHAR}, #{fs,jdbcType=VARCHAR}, #{depCity,jdbcType=VARCHAR}, 
+      #{depCode,jdbcType=VARCHAR}, #{arrCity,jdbcType=VARCHAR}, #{arrCode,jdbcType=VARCHAR}, 
+      #{passCity,jdbcType=VARCHAR}, #{passCode,jdbcType=VARCHAR}, #{gate,jdbcType=VARCHAR}, 
+      #{errorCode,jdbcType=VARCHAR}, #{location,jdbcType=VARCHAR}, #{count,jdbcType=VARCHAR}, 
+      #{delayRes,jdbcType=VARCHAR}, #{result,jdbcType=VARCHAR}, #{resultCode,jdbcType=VARCHAR}, 
+      #{sendState,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, #{operator,jdbcType=VARCHAR}, 
+      #{takeoffTime,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="map" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into zkkj_notice_flight
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      id,
+      <if test="noticeId != null" >
+        noticeId,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      <if test="flightNo != null" >
+        flightNo,
+      </if>
+      <if test="fs != null" >
+        fs,
+      </if>
+      <if test="depCity != null" >
+        depCity,
+      </if>
+      <if test="depCode != null" >
+        depCode,
+      </if>
+      <if test="arrCity != null" >
+        arrCity,
+      </if>
+      <if test="arrCode != null" >
+        arrCode,
+      </if>
+      <if test="passCity != null" >
+        passCity,
+      </if>
+      <if test="passCode != null" >
+        passCode,
+      </if>
+      <if test="gate != null" >
+        gate,
+      </if>
+      <if test="errorCode != null" >
+        errorCode,
+      </if>
+      <if test="location != null" >
+        location,
+      </if>
+      <if test="count != null" >
+        count,
+      </if>
+      <if test="delayRes != null" >
+        delayRes,
+      </if>
+      <if test="result != null" >
+        result,
+      </if>
+      <if test="resultCode != null" >
+        resultCode,
+      </if>
+      <if test="sendState != null" >
+        sendState,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="operator != null" >
+        operator,
+      </if>
+      <if test="takeoffTime != null" >
+        takeoffTime,
+      </if>
+      <if test="createTime != null" >
+        createTime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      #{id,jdbcType=INTEGER},
+      <if test="noticeId != null" >
+        #{noticeId,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="flightNo != null" >
+        #{flightNo,jdbcType=VARCHAR},
+      </if>
+      <if test="fs != null" >
+        #{fs,jdbcType=VARCHAR},
+      </if>
+      <if test="depCity != null" >
+        #{depCity,jdbcType=VARCHAR},
+      </if>
+      <if test="depCode != null" >
+        #{depCode,jdbcType=VARCHAR},
+      </if>
+      <if test="arrCity != null" >
+        #{arrCity,jdbcType=VARCHAR},
+      </if>
+      <if test="arrCode != null" >
+        #{arrCode,jdbcType=VARCHAR},
+      </if>
+      <if test="passCity != null" >
+        #{passCity,jdbcType=VARCHAR},
+      </if>
+      <if test="passCode != null" >
+        #{passCode,jdbcType=VARCHAR},
+      </if>
+      <if test="gate != null" >
+        #{gate,jdbcType=VARCHAR},
+      </if>
+      <if test="errorCode != null" >
+        #{errorCode,jdbcType=VARCHAR},
+      </if>
+      <if test="location != null" >
+        #{location,jdbcType=VARCHAR},
+      </if>
+      <if test="count != null" >
+        #{count,jdbcType=VARCHAR},
+      </if>
+      <if test="delayRes != null" >
+        #{delayRes,jdbcType=VARCHAR},
+      </if>
+      <if test="result != null" >
+        #{result,jdbcType=VARCHAR},
+      </if>
+      <if test="resultCode != null" >
+        #{resultCode,jdbcType=VARCHAR},
+      </if>
+      <if test="sendState != null" >
+        #{sendState,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="operator != null" >
+        #{operator,jdbcType=VARCHAR},
+      </if>
+      <if test="takeoffTime != null" >
+        #{takeoffTime,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zkkj.backend.entity.biz.NoticeFlight" >
+    update zkkj_notice_flight
+    <set >
+      <if test="type != null" >
+        type = #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="flightNo != null" >
+        flightNo = #{flightNo,jdbcType=VARCHAR},
+      </if>
+      <if test="fs != null" >
+        fs = #{fs,jdbcType=VARCHAR},
+      </if>
+      <if test="depCity != null" >
+        depCity = #{depCity,jdbcType=VARCHAR},
+      </if>
+      <if test="depCode != null" >
+        depCode = #{depCode,jdbcType=VARCHAR},
+      </if>
+      <if test="arrCity != null" >
+        arrCity = #{arrCity,jdbcType=VARCHAR},
+      </if>
+      <if test="arrCode != null" >
+        arrCode = #{arrCode,jdbcType=VARCHAR},
+      </if>
+      <if test="passCity != null" >
+        passCity = #{passCity,jdbcType=VARCHAR},
+      </if>
+      <if test="passCode != null" >
+        passCode = #{passCode,jdbcType=VARCHAR},
+      </if>
+      <if test="gate != null" >
+        gate = #{gate,jdbcType=VARCHAR},
+      </if>
+      <if test="errorCode != null" >
+        errorCode = #{errorCode,jdbcType=VARCHAR},
+      </if>
+      <if test="location != null" >
+        location = #{location,jdbcType=VARCHAR},
+      </if>
+      <if test="count != null" >
+        count = #{count,jdbcType=VARCHAR},
+      </if>
+      <if test="delayRes != null" >
+        delayRes = #{delayRes,jdbcType=VARCHAR},
+      </if>
+      <if test="result != null" >
+        result = #{result,jdbcType=VARCHAR},
+      </if>
+      <if test="resultCode != null" >
+        resultCode = #{resultCode,jdbcType=VARCHAR},
+      </if>
+      <if test="sendState != null" >
+        sendState = #{sendState,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="operator != null" >
+        operator = #{operator,jdbcType=VARCHAR},
+      </if>
+      <if test="takeoffTime != null" >
+        takeoffTime = #{takeoffTime,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        createTime = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+      and noticeId = #{noticeId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zkkj.backend.entity.biz.NoticeFlight" >
+    update zkkj_notice_flight
+    set type = #{type,jdbcType=VARCHAR},
+      flightNo = #{flightNo,jdbcType=VARCHAR},
+      fs = #{fs,jdbcType=VARCHAR},
+      depCity = #{depCity,jdbcType=VARCHAR},
+      depCode = #{depCode,jdbcType=VARCHAR},
+      arrCity = #{arrCity,jdbcType=VARCHAR},
+      arrCode = #{arrCode,jdbcType=VARCHAR},
+      passCity = #{passCity,jdbcType=VARCHAR},
+      passCode = #{passCode,jdbcType=VARCHAR},
+      gate = #{gate,jdbcType=VARCHAR},
+      errorCode = #{errorCode,jdbcType=VARCHAR},
+      location = #{location,jdbcType=VARCHAR},
+      count = #{count,jdbcType=VARCHAR},
+      delayRes = #{delayRes,jdbcType=VARCHAR},
+      result = #{result,jdbcType=VARCHAR},
+      resultCode = #{resultCode,jdbcType=VARCHAR},
+      sendState = #{sendState,jdbcType=VARCHAR},
+      status = #{status,jdbcType=VARCHAR},
+      operator = #{operator,jdbcType=VARCHAR},
+      takeoffTime = #{takeoffTime,jdbcType=VARCHAR},
+      createTime = #{createTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+      and noticeId = #{noticeId,jdbcType=VARCHAR}
+  </update>
+</mapper>

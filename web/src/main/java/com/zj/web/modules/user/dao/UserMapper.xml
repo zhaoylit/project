@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zj.web.modules.user.dao.UserMapper" >
+  <select id="selectList" resultType="java.util.Map" parameterType="java.util.Map" >
+    select 
+    tu.*
+    ,date_format(tu.loginTime,'%Y-%m-%d %H:%i:%s') as loginTimeShow
+    ,date_format(tu.lastLoginTime,'%Y-%m-%d %H:%i:%s') as lastLoginTimeShow
+    ,tui.*
+    ,CASE WHEN tu.userName = 'admin' THEN '超级管理员' 
+          ELSE tar.roleName
+    END AS roleName
+    ,case when tu.status = 1 then '正常'
+     end as statusShow
+    ,case when tu.status = 1 then 'green'
+     end as styleShow
+    ,case when tu.userType = 1 then '普通用户'
+    	  when tu.userType = 2 then '商家'
+     end as userTypeShow
+    from tb_user tu
+    LEFT JOIN tb_user_info tui on tui.userId = tu.id
+    LEFT JOIN tb_auth_role tar on tar.id = tu.roleId and tar.roleStatus = 1
+    where 1 = 1
+    <if test="userName != null and userName != ''" >
+    and tu.userName = #{userName}
+    </if>
+    <if test="passWord != null and passWord != ''" >
+    and tu.passWord = #{passWord}
+    </if>
+    <if test="userType != null and  userType != ''">
+    and userType = #{userType}
+    </if>
+    <if test="keyWords != null and keyWords != ''">
+     and (
+       trueName like CONCAT('%',#{keyWords},'%')
+       or mobile like CONCAT('%',#{keyWords},'%')
+       or email like CONCAT('%',#{keyWords},'%')
+       or nickName like CONCAT('%',#{nickName},'%')
+     )
+    </if>
+    order by tu.addTime desc
+  </select>
+  <select id="selectCount" parameterType="java.util.Map" resultType="java.lang.Integer">
+    select count(*)
+    from tb_user
+    where 1 = 1
+    <if test="userName != null and userName != ''" >
+    and userName = #{userName}
+    </if>
+    <if test="passWord != null and passWord != ''" >
+    and passWord = #{passWord}
+    </if>
+    <if test="userType != null and  userType != ''">
+    and userType = #{userType}
+    </if>
+    <if test="keyWords != null and keyWords != ''">
+     and (
+       trueName like CONCAT('%',#{keyWords},'%')
+       or mobile like CONCAT('%',#{keyWords},'%')
+       or email like CONCAT('%',#{keyWords},'%')
+       or nickName like CONCAT('%',#{nickName},'%')
+     )
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultType="java.util.Map" parameterType="java.lang.Integer" >
+    select *
+    from tb_user
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from tb_user
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="java.util.Map" >
+    insert into tb_user (id, userName, passWord, 
+      roleId, status)
+    values (#{id,jdbcType=INTEGER}, #{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
+      #{roleid,jdbcType=INTEGER}, #{status,jdbcType=INTEGER})
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="java.util.Map" >
+    update tb_user
+    <set >
+      <if test="username != null and userName != ''" >
+        userName = #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null and password != ''" >
+        passWord = #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="orgId != null and orgId != ''" >
+        orgId = #{orgId,jdbcType=INTEGER},
+      </if>
+      <if test="roleId != null and roleId != ''" >
+        roleId = #{roleId,jdbcType=INTEGER},
+      </if>
+      <if test="status != null and status != ''" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="loginTime != null and loginTime != ''">
+        loginTime = #{loginTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastLoginTime != null and lastLoginTime != ''" >
+        lastLoginTime = #{lastLoginTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

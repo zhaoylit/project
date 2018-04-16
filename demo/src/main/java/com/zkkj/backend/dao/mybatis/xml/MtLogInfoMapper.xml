@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zkkj.backend.dao.mybatis.mapper.MtLogInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.zkkj.backend.entity.MtLogInfo" >
+    <id column="mtLogId" property="mtLogId" jdbcType="INTEGER" />
+    <result column="mtOperatorId" property="mtOperatorId" jdbcType="INTEGER" />
+    <result column="terminalUUID" property="terminalUUID" jdbcType="VARCHAR" />
+    <result column="sendType" property="sendType" jdbcType="VARCHAR" />
+    <result column="authCode" property="authCode" jdbcType="VARCHAR" />
+    <result column="authResult" property="authResult" jdbcType="VARCHAR" />
+    <result column="sendResult" property="sendResult" jdbcType="VARCHAR" />
+    <result column="sendStatus" property="sendStatus" jdbcType="VARCHAR" />
+    <result column="addedTime" property="addedTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.zkkj.backend.entity.MtLogInfo" extends="BaseResultMap" >
+    <result column="userMSISDN" property="userMSISDN" jdbcType="LONGVARCHAR" />
+    <result column="content" property="content" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    mtLogId, mtOperatorId, terminalUUID, sendType, authCode, authResult, sendResult, 
+    sendStatus, addedTime
+  </sql>
+  <sql id="Blob_Column_List" >
+    userMSISDN, content
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from mt_log_info
+    where mtLogId = #{mtLogId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from mt_log_info
+    where mtLogId = #{mtLogId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.zkkj.backend.entity.MtLogInfo" >
+    <selectKey resultType="java.lang.Integer" keyProperty="mtLogId" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into mt_log_info (mtLogId, mtOperatorId, terminalUUID, 
+      sendType, authCode, authResult, 
+      sendResult, sendStatus, addedTime, 
+      userMSISDN, content)
+    values (#{mtLogId,jdbcType=INTEGER}, #{mtOperatorId,jdbcType=INTEGER}, #{terminalUUID,jdbcType=VARCHAR}, 
+      #{sendType,jdbcType=VARCHAR}, #{authCode,jdbcType=VARCHAR}, #{authResult,jdbcType=VARCHAR}, 
+      #{sendResult,jdbcType=VARCHAR}, #{sendStatus,jdbcType=VARCHAR}, now(), 
+      #{userMSISDN,jdbcType=LONGVARCHAR}, #{content,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.zkkj.backend.entity.MtLogInfo" >
+    <selectKey resultType="java.lang.Integer" keyProperty="mtLogId" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into mt_log_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      mtLogId,
+      <if test="mtOperatorId != null" >
+        mtOperatorId,
+      </if>
+      <if test="terminalUUID != null" >
+        terminalUUID,
+      </if>
+      <if test="sendType != null" >
+        sendType,
+      </if>
+      <if test="authCode != null" >
+        authCode,
+      </if>
+      <if test="authResult != null" >
+        authResult,
+      </if>
+      <if test="sendResult != null" >
+        sendResult,
+      </if>
+      <if test="sendStatus != null" >
+        sendStatus,
+      </if>
+      <if test="userMSISDN != null" >
+        userMSISDN,
+      </if>
+      <if test="content != null" >
+        content,
+      </if>
+        addedTime
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      #{mtLogId,jdbcType=INTEGER},
+      <if test="mtOperatorId != null" >
+        #{mtOperatorId,jdbcType=INTEGER},
+      </if>
+      <if test="terminalUUID != null" >
+        #{terminalUUID,jdbcType=VARCHAR},
+      </if>
+      <if test="sendType != null" >
+        #{sendType,jdbcType=VARCHAR},
+      </if>
+      <if test="authCode != null" >
+        #{authCode,jdbcType=VARCHAR},
+      </if>
+      <if test="authResult != null" >
+        #{authResult,jdbcType=VARCHAR},
+      </if>
+      <if test="sendResult != null" >
+        #{sendResult,jdbcType=VARCHAR},
+      </if>
+      <if test="sendStatus != null" >
+        #{sendStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="userMSISDN != null" >
+        #{userMSISDN,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="content != null" >
+        #{content,jdbcType=LONGVARCHAR},
+      </if>
+      now()
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zkkj.backend.entity.MtLogInfo" >
+    update mt_log_info
+    <set >
+      <if test="mtOperatorId != null" >
+        mtOperatorId = #{mtOperatorId,jdbcType=INTEGER},
+      </if>
+      <if test="terminalUUID != null" >
+        terminalUUID = #{terminalUUID,jdbcType=VARCHAR},
+      </if>
+      <if test="sendType != null" >
+        sendType = #{sendType,jdbcType=VARCHAR},
+      </if>
+      <if test="authCode != null" >
+        authCode = #{authCode,jdbcType=VARCHAR},
+      </if>
+      <if test="authResult != null" >
+        authResult = #{authResult,jdbcType=VARCHAR},
+      </if>
+      <if test="sendResult != null" >
+        sendResult = #{sendResult,jdbcType=VARCHAR},
+      </if>
+      <if test="sendStatus != null" >
+        sendStatus = #{sendStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="addedTime != null" >
+        addedTime = #{addedTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="userMSISDN != null" >
+        userMSISDN = #{userMSISDN,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="content != null" >
+        content = #{content,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where mtLogId = #{mtLogId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.zkkj.backend.entity.MtLogInfo" >
+    update mt_log_info
+    set mtOperatorId = #{mtOperatorId,jdbcType=INTEGER},
+      terminalUUID = #{terminalUUID,jdbcType=VARCHAR},
+      sendType = #{sendType,jdbcType=VARCHAR},
+      authCode = #{authCode,jdbcType=VARCHAR},
+      authResult = #{authResult,jdbcType=VARCHAR},
+      sendResult = #{sendResult,jdbcType=VARCHAR},
+      sendStatus = #{sendStatus,jdbcType=VARCHAR},
+      addedTime = #{addedTime,jdbcType=TIMESTAMP},
+      userMSISDN = #{userMSISDN,jdbcType=LONGVARCHAR},
+      content = #{content,jdbcType=LONGVARCHAR}
+    where mtLogId = #{mtLogId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zkkj.backend.entity.MtLogInfo" >
+    update mt_log_info
+    set mtOperatorId = #{mtOperatorId,jdbcType=INTEGER},
+      terminalUUID = #{terminalUUID,jdbcType=VARCHAR},
+      sendType = #{sendType,jdbcType=VARCHAR},
+      authCode = #{authCode,jdbcType=VARCHAR},
+      authResult = #{authResult,jdbcType=VARCHAR},
+      sendResult = #{sendResult,jdbcType=VARCHAR},
+      sendStatus = #{sendStatus,jdbcType=VARCHAR},
+      addedTime = #{addedTime,jdbcType=TIMESTAMP}
+    where mtLogId = #{mtLogId,jdbcType=INTEGER}
+  </update>
+</mapper>

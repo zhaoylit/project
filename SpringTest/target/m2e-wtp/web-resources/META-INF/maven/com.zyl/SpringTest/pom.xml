@@ -1,0 +1,202 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.zyl</groupId>
+  <artifactId>SpringTest</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>war</packaging>
+
+  <name>SpringTest</name>
+  <url>http://maven.apache.org</url>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <spring.version>4.1.4.RELEASE</spring.version>
+  </properties>
+
+  <dependencies>
+	<!--   	引入spring框架 -->
+	<dependency>  
+        <groupId>org.springframework</groupId> 
+        <artifactId>spring-aop</artifactId>  
+        <version>${spring.version}</version>  
+        <type>jar</type>
+    </dependency>
+	<dependency>  
+        <groupId>org.springframework</groupId> 
+        <artifactId>spring-aspects</artifactId>  
+        <version>${spring.version}</version>  
+        <type>jar</type>
+    </dependency>
+    
+	<dependency>  
+        <groupId>org.springframework</groupId> 
+        <artifactId>spring-beans</artifactId>  
+        <version>${spring.version}</version>  
+        <type>jar</type>
+    </dependency>
+    
+	<dependency>  
+        <groupId>org.springframework</groupId> 
+        <artifactId>spring-context</artifactId>  
+        <version>${spring.version}</version>  
+        <type>jar</type>
+    </dependency>
+    
+	<dependency>  
+        <groupId>org.springframework</groupId> 
+        <artifactId>spring-context-support</artifactId>  
+        <version>${spring.version}</version>  
+        <type>jar</type>
+    </dependency>
+    
+	<dependency>  
+        <groupId>org.springframework</groupId> 
+        <artifactId>spring-context-support</artifactId>  
+        <version>${spring.version}</version>  
+        <type>jar</type>
+    </dependency>
+    
+	<dependency>  
+        <groupId>org.springframework</groupId> 
+        <artifactId>spring-core</artifactId>  
+        <version>${spring.version}</version>  
+        <type>jar</type>
+    </dependency>
+	<dependency>  
+        <groupId>org.springframework</groupId> 
+        <artifactId>spring-expression</artifactId>  
+        <version>${spring.version}</version>  
+        <type>jar</type>
+    </dependency>
+	<dependency>  
+        <groupId>org.springframework</groupId> 
+        <artifactId>spring-instrument</artifactId>  
+        <version>${spring.version}</version>  
+        <type>jar</type>
+    </dependency>
+	<dependency>  
+        <groupId>org.springframework</groupId> 
+        <artifactId>spring-instrument-tomcat</artifactId>  
+        <version>${spring.version}</version>  
+        <type>jar</type>
+    </dependency>
+	<dependency>  
+        <groupId>org.springframework</groupId> 
+        <artifactId>spring-jdbc</artifactId>  
+        <version>${spring.version}</version>  
+        <type>jar</type>
+    </dependency>
+	<dependency>  
+        <groupId>org.springframework</groupId> 
+        <artifactId>spring-jms</artifactId>  
+        <version>${spring.version}</version>  
+        <type>jar</type>
+    </dependency>
+	<dependency>  
+        <groupId>org.springframework</groupId> 
+        <artifactId>spring-messaging</artifactId>  
+        <version>${spring.version}</version>  
+        <type>jar</type>
+    </dependency>
+	<dependency>  
+        <groupId>org.springframework</groupId> 
+        <artifactId>spring-orm</artifactId>  
+        <version>${spring.version}</version>  
+        <type>jar</type>
+    </dependency>
+	<dependency>  
+        <groupId>org.springframework</groupId> 
+        <artifactId>spring-oxm</artifactId>  
+        <version>${spring.version}</version>  
+        <type>jar</type>
+    </dependency>
+	<dependency>  
+        <groupId>org.springframework</groupId> 
+        <artifactId>spring-test</artifactId>  
+        <version>${spring.version}</version>  
+        <type>jar</type>
+    </dependency>
+	<dependency>  
+        <groupId>org.springframework</groupId> 
+        <artifactId>spring-tx</artifactId>  
+        <version>${spring.version}</version>  
+        <type>jar</type>
+    </dependency>
+	<dependency>  
+        <groupId>org.springframework</groupId> 
+        <artifactId>spring-web</artifactId>  
+        <version>${spring.version}</version>  
+        <type>jar</type>
+    </dependency>
+	<dependency>  
+        <groupId>org.springframework</groupId> 
+        <artifactId>spring-webmvc</artifactId>  
+        <version>${spring.version}</version>  
+        <type>jar</type>
+    </dependency>
+	<dependency>  
+        <groupId>org.springframework</groupId> 
+        <artifactId>spring-webmvc-portlet</artifactId>  
+        <version>${spring.version}</version>  
+        <type>jar</type>
+    </dependency>
+	<dependency>  
+        <groupId>org.springframework</groupId> 
+        <artifactId>spring-websocket</artifactId>  
+        <version>${spring.version}</version>  
+        <type>jar</type>
+    </dependency>
+    
+    <dependency>  
+        <groupId>junit</groupId>  
+        <artifactId>junit</artifactId>  
+        <version>4.11</version>  
+        <scope>test</scope>  
+    </dependency>  
+  </dependencies>
+  
+  <build>
+	<plugins>
+	  	<!-- 编译插件 -->
+		<plugin>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-compiler-plugin</artifactId>
+			<version>3.1</version>
+			<configuration>
+				<source>1.7</source>
+				<target>1.7</target>
+				<encoding>UTF-8</encoding>
+				<compilerArguments>
+					<verbose />
+					<bootclasspath>${java.home}/lib/rt.jar;${java.home}/lib/jce.jar</bootclasspath>
+				</compilerArguments>
+			</configuration>
+		</plugin>
+		
+		<plugin>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-war-plugin</artifactId>
+			<version>2.3</version>
+			<configuration>
+				<webXml>src/main/webapp/WEB-INF/web.xml</webXml>
+			</configuration>
+		</plugin>
+
+		<!-- generate java doc -->
+		<plugin>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-javadoc-plugin</artifactId>
+			<version>2.9.1</version>
+			<configuration>
+				<javadocDirectory>target/javadoc</javadocDirectory>
+				<reportOutputDirectory>target/javadoc</reportOutputDirectory>
+				<charset>UTF-8</charset>
+				<encoding>UTF-8</encoding>
+				<docencoding>UTF-8</docencoding>
+				<show>private</show>
+			</configuration>
+		</plugin>
+	</plugins>
+  </build>
+</project>

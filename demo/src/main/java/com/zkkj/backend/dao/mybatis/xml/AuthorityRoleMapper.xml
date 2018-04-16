@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zkkj.backend.dao.mybatis.mapper.AuthorityRoleMapper" >
+  <resultMap id="BaseResultMap" type="com.zkkj.backend.entity.AuthorityRole" >
+    <id column="roleId" property="roleId" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="alias" property="alias" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="VARCHAR" />
+    <result column="addedTime" property="addedTime" jdbcType="TIMESTAMP" />
+    <result column="updateTime" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <resultMap id="MenuIdMap" type="java.lang.Integer" >
+    <result column="menuId" property="name" jdbcType="INTEGER" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    roleId, name, alias, status, addedTime, updateTime
+  </sql>
+  <select id="queryAuthorityRoleList" parameterType="com.zkkj.backend.entity.AuthorityRole" resultMap="BaseResultMap">
+	   select 
+	    <include refid="Base_Column_List" />
+	    from authority_role
+	   <where>
+	     <if test="name!=null and name != ''" >
+	        name like concat('%',#{name,jdbcType=VARCHAR},'%')
+	     </if>
+	    <if test="status != null and status != ''">
+	        and status = #{status,jdbcType=VARCHAR}
+	     </if>
+	   </where>
+  </select>
+  
+  <select id="getUserOwnedRoleList" parameterType="int" resultMap="BaseResultMap">
+	    SELECT 
+	      a.roleId,a.name,a.alias,a.status,a.addedTime,a.updateTime
+	    FROM
+			authority_role a,
+			authority_user_role b
+		WHERE
+			a.roleId = b.roleId and b.operatorId = #{value,jdbcType=INTEGER}	    
+  </select>   
+  
+  <select id="queryMenuListByRoleId" parameterType="java.lang.Integer" resultMap="MenuIdMap">
+	   select menuId from authority_role_menu where status ='1' and roleId = #{roleId,jdbcType=INTEGER}
+  </select>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from authority_role
+    where roleId = #{roleId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from authority_role
+    where roleId = #{roleId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.zkkj.backend.entity.AuthorityRole" >
+    <selectKey resultType="java.lang.Integer" keyProperty="roleId" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into authority_role (roleId, name, alias, 
+      status, addedTime, updateTime
+      )
+    values (#{roleId,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{alias,jdbcType=VARCHAR}, 
+      #{status,jdbcType=VARCHAR}, now(), now()
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.zkkj.backend.entity.AuthorityRole" >
+    <selectKey resultType="java.lang.Integer" keyProperty="roleId" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into authority_role
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      roleId,
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="alias != null" >
+        alias,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="addedTime != null" >
+        addedTime,
+      </if>
+        updateTime
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      #{roleId,jdbcType=INTEGER},
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="alias != null" >
+        #{alias,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="addedTime != null" >
+        #{addedTime,jdbcType=TIMESTAMP},
+      </if>
+    	 now()
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zkkj.backend.entity.AuthorityRole" >
+    update authority_role
+    <set >
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="alias != null" >
+        alias = #{alias,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        updateTime = now()
+      </if>
+    </set>
+    where roleId = #{roleId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zkkj.backend.entity.AuthorityRole" >
+    update authority_role
+    set name = #{name,jdbcType=VARCHAR},
+      alias = #{alias,jdbcType=VARCHAR},
+      status = #{status,jdbcType=VARCHAR},
+      updateTime = now()
+    where roleId = #{roleId,jdbcType=INTEGER}
+  </update>
+  
+  <insert id="insertRolePrivilege" parameterType="map" >
+    INSERT INTO authority_role_privilege (
+		roleId,
+		privilegeId,
+		addedTime
+	)
+	VALUES
+	(
+		#{roleId},
+		#{privilegeId},
+		now()
+	)    
+  </insert>
+    
+  <delete id="removeOwnedPrivilege" parameterType="map" >
+		delete from authority_role_privilege
+		where roleId=#{roleId} and privilegeId =#{privilegeId} 
+  </delete>
+  
+</mapper>

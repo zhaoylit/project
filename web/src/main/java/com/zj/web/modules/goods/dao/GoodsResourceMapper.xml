@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zj.web.modules.goods.dao.GoodsResourceMapper" >
+  <!-- <cache readOnly="true">
+    <property name="timeToIdleSeconds" value="36000"/>  
+    <property name="timeToLiveSeconds" value="36000"/>
+    <property name="maxEntriesLocalHeap" value="1000"/>  
+    <property name="maxEntriesLocalDisk" value="10000000"/>  
+    <property name="memoryStoreEvictionPolicy" value="LRU"/>  
+   </cache> -->
+  <!--    查询列表 -->
+  <select id="selectList" resultType="java.util.Map" parameterType="java.util.Map">
+   	SELECT agr.* 
+    FROM app_goods_resources agr
+    WHERE 1 = 1
+    <if test="id != null and id != ''">
+    AND agr.goodsId = #{id}
+    </if>
+    ORDER BY agr.`order` ASC
+  </select>
+  <!--   查询列表数量 -->
+  <select id="selectCount" parameterType ="java.util.Map" resultType="java.lang.Integer">
+    SELECT count(*)
+    FROM app_goods_resources agr
+    WHERE 1 = 1
+    <if test="id != null and id != ''">
+    AND agr.goodsId = #{id}
+    </if>
+    ORDER BY agr.`order` ASC
+  </select>
+  <!--   单条 -->
+  <select id="selectOne" parameterType="java.util.Map" resultType="java.util.Map">
+    SELECT agr.* 
+    FROM app_goods_resources agr
+    WHERE 1 = 1
+    <if test="id != null and id != ''">
+    AND agr.goodsId = #{id}
+    </if>
+     limit 1
+  </select>
+  <!-- 添加 -->
+  <insert id="insert" parameterType="java.util.Map"  useGeneratedKeys="true" keyProperty="id">
+    INSERT INTO `app_goods_resources` (
+		`goodsId`,
+		`imageUrl`,
+		`order`,
+		`isCover`,
+		`addedTime`,
+		`fileSize`,
+		`fileOldName`
+	)
+	VALUES
+		(
+			#{goodsId},
+			#{imageUrl},
+			#{order},
+			0,
+			now(),
+			#{fileSize},
+			#{fileOldName}
+		)
+  </insert>
+ <!--   更新 -->
+ <update id="updateByPrimaryKeySelective" parameterType="java.util.Map" >
+    update app_goods_resources
+    <set >
+      <if test="goodsId != null" >
+        goodsId = #{goodsId,jdbcType=INTEGER},
+      </if>
+      <if test="imageUrl != null" >
+        imageUrl = #{imageUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="order != null" >
+        order = #{order,jdbcType=INTEGER},
+      </if>
+      <if test="isCover != null" >
+        isCover = #{isCover,jdbcType=INTEGER},
+      </if>
+      <if test="fileSize != null" >
+        fileSize = #{fileSize,jdbcType=INTEGER},
+      </if>
+      <if test="fileOldName != null" >
+        fileOldName = #{fileOldName,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <!--   删除 -->
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from  app_goods_resources
+    where id in 
+    <foreach collection="array" open="(" separator="," close=")" item="id">
+    	#{id}
+    </foreach>
+  </delete>
+</mapper>

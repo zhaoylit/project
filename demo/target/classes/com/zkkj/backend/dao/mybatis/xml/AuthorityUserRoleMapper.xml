@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zkkj.backend.dao.mybatis.mapper.AuthorityUserRoleMapper" >
+  <resultMap id="BaseResultMap" type="com.zkkj.backend.entity.AuthorityUserRole" >
+    <result column="operatorId" property="operatorId" jdbcType="INTEGER" />
+    <result column="roleId" property="roleId" jdbcType="INTEGER" />
+    <result column="addedTime" property="addedTime" jdbcType="TIMESTAMP" />
+    <result column="updateTime" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+
+  <select id="queryAuthorityUserRoleList" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select operatorId,roleId
+    from authority_user_role
+    where operatorId = #{operatorId,jdbcType=INTEGER}
+  </select>
+  <insert id="insert" parameterType="com.zkkj.backend.entity.AuthorityUserRole" >
+    insert into authority_user_role (operatorId, roleId, addedTime, 
+      updateTime)
+    values (#{operatorId,jdbcType=INTEGER}, #{roleId,jdbcType=INTEGER}, #{addedTime,jdbcType=TIMESTAMP}, 
+      #{updateTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.zkkj.backend.entity.AuthorityUserRole" >
+    insert into authority_user_role
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="operatorId != null" >
+        operatorId,
+      </if>
+      <if test="roleId != null" >
+        roleId,
+      </if>
+      <if test="addedTime != null" >
+        addedTime,
+      </if>
+      <if test="updateTime != null" >
+        updateTime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="operatorId != null" >
+        #{operatorId,jdbcType=INTEGER},
+      </if>
+      <if test="roleId != null" >
+        #{roleId,jdbcType=INTEGER},
+      </if>
+      <if test="addedTime != null" >
+        #{addedTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+</mapper>

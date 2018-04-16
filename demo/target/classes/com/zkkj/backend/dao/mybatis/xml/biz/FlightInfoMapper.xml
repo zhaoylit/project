@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zkkj.backend.dao.mybatis.mapper.biz.FlightInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.zkkj.backend.entity.biz.FlightInfo" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <id column="flightNo" property="flightNo" jdbcType="VARCHAR" />
+    <result column="depCity" property="depCity" jdbcType="VARCHAR" />
+    <result column="passCity" property="passCity" jdbcType="VARCHAR" />
+    <result column="arrCity" property="arrCity" jdbcType="VARCHAR" />
+    <result column="takeoffTime" property="takeoffTime" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, flightNo, depCity, passCity, arrCity, takeoffTime
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+    from zkkj_flight_info
+    where id = #{id,jdbcType=INTEGER}
+      and flightNo = #{flightNo,jdbcType=VARCHAR}
+  </select>
+  
+   <select id="getAllFlightPlanList" resultType="map" >
+    select 
+    <include refid="Base_Column_List" />
+     from zkkj_flight_info
+  </select>
+  
+  <select id="getSimpleFlightPlan" parameterType="string" resultType="map" >
+    select 
+    <include refid="Base_Column_List" />
+     from zkkj_flight_info 
+     where flightNo=#{flightNo} limit 1
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="map" >
+    delete from zkkj_flight_info
+    where id = #{id,jdbcType=INTEGER}
+      and flightNo = #{flightNo,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.zkkj.backend.entity.biz.FlightInfo" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into zkkj_flight_info (id, flightNo, depCity, 
+      passCity, arrCity, takeoffTime
+      )
+    values (#{id,jdbcType=INTEGER}, #{flightNo,jdbcType=VARCHAR}, #{depCity,jdbcType=VARCHAR}, 
+      #{passCity,jdbcType=VARCHAR}, #{arrCity,jdbcType=VARCHAR}, #{takeoffTime,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.zkkj.backend.entity.biz.FlightInfo" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into zkkj_flight_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      id,
+      <if test="flightNo != null" >
+        flightNo,
+      </if>
+      <if test="depCity != null" >
+        depCity,
+      </if>
+      <if test="passCity != null" >
+        passCity,
+      </if>
+      <if test="arrCity != null" >
+        arrCity,
+      </if>
+      <if test="takeoffTime != null" >
+        takeoffTime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      #{id,jdbcType=INTEGER},
+      <if test="flightNo != null" >
+        #{flightNo,jdbcType=VARCHAR},
+      </if>
+      <if test="depCity != null" >
+        #{depCity,jdbcType=VARCHAR},
+      </if>
+      <if test="passCity != null" >
+        #{passCity,jdbcType=VARCHAR},
+      </if>
+      <if test="arrCity != null" >
+        #{arrCity,jdbcType=VARCHAR},
+      </if>
+      <if test="takeoffTime != null" >
+        #{takeoffTime,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zkkj.backend.entity.biz.FlightInfo" >
+    update zkkj_flight_info
+    <set >
+      <if test="depCity != null" >
+        depCity = #{depCity,jdbcType=VARCHAR},
+      </if>
+      <if test="passCity != null" >
+        passCity = #{passCity,jdbcType=VARCHAR},
+      </if>
+      <if test="arrCity != null" >
+        arrCity = #{arrCity,jdbcType=VARCHAR},
+      </if>
+      <if test="takeoffTime != null" >
+        takeoffTime = #{takeoffTime,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+      and flightNo = #{flightNo,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zkkj.backend.entity.biz.FlightInfo" >
+    update zkkj_flight_info
+    set depCity = #{depCity,jdbcType=VARCHAR},
+      passCity = #{passCity,jdbcType=VARCHAR},
+      arrCity = #{arrCity,jdbcType=VARCHAR},
+      takeoffTime = #{takeoffTime,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+      and flightNo = #{flightNo,jdbcType=VARCHAR}
+  </update>
+</mapper>

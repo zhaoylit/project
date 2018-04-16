@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="message" >
+	<!-- 	根据条件查询消息列表 -->
+    <select id="getMessageList"  parameterType="java.util.Map" resultType="java.util.Map">
+    	select tm.*
+    	,date_format(tm.addedTime,'%Y-%m-%d %H:%i:%s') as addedTimeShow
+    	,tu.headUrl 
+    	,tu.nickName
+    	from tb_message tm
+    	LEFT JOIN tb_user tu ON tu.id = tm.fromUserId
+    	where 1 = 1
+    	<if test="chatType != null and chatType != ''">
+    	and tm.chatType = #{chatType}
+    	</if>
+    	<if test="messageType != null and messageType != ''">
+    	and tm.messageType = #{messageType}
+    	</if>
+    	<if test="groupId != null and groupId != ''">
+    	and tm.groupId = #{groupId}
+    	</if>
+    	<if test="fromUserId != null and fromUserId != ''">
+    	and tm.fromUserId = #{fromUserId}
+    	</if>
+    	<if test="toUserId != null and toUserId != ''">
+    	and tm.toUserId = #{toUserId}
+    	</if>
+    	<if test="beginTime != null and beginTime != ''">
+    	and tm.addedTime &gt;= date_format(#{beginTime},'%y-%m-%d %H:%i:%s')
+    	</if>
+    	<if test="endTime != null and endTime != ''">
+    	and tm.addedTime &lt; date_format(#{endTime},'%y-%m-%d %H:%i:%s')
+    	</if>
+    	order by tm.addedTime desc
+    </select>
+	<!--  添加消息 -->
+    <insert id="addMessage" parameterType = "java.util.Map" useGeneratedKeys="true" keyProperty="id">
+    	INSERT INTO `tb_message` (
+			`fromUserId`,
+			`toUserId`,
+			`chatType`,
+			`messageType`,
+			`groupId`,
+			`content`,
+			`extra`
+		)
+		VALUES
+			(
+				#{fromUserId},
+				#{toUserId},
+				#{chatType},
+				#{messageType},
+				#{groupId},
+				#{content},
+				#{extra}
+			)
+    </insert>
+	<!--     根据消息id删除消息 -->
+    <delete id="deleteMessage" parameterType ="java.util.Map">
+     delete from tb_message where id = #{msgId}
+    </delete>
+</mapper>

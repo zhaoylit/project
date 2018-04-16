@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans    
+        http://www.springframework.org/schema/beans/spring-beans.xsd    
+        http://code.alibabatech.com/schema/dubbo    
+        http://code.alibabatech.com/schema/dubbo/dubbo.xsd    
+        ">
+	<!-- 消费者应用名 -->
+	<dubbo:application name="consumer-of-zkkj" />
+	<!-- 注册中心地址 -->
+	<dubbo:registry address="zookeeper://111.200.212.30:2181" timeout="10000"/>
+	<dubbo:consumer timeout="20000" />
+	<!-- 要调用的远程服务 -->
+	<!-- 设备管理 -->
+	<dubbo:reference id="deviceManageService"
+		interface="com.zkkj.platform.device.DeviceManageService" />
+	<!-- 用户管理 -->
+	<dubbo:reference id="userManageService"
+		interface="com.zkkj.platform.user.UserManageService" />
+		<!-- 用户组管理 -->
+	<dubbo:reference id="userGroupManageService"
+		interface="com.zkkj.platform.user.UserGroupManageService" />
+	<!-- 播放日志管理接口 -->
+	<dubbo:reference id="playLogManageService"
+		interface="com.zkkj.platform.log.PlayLogManageService" />
+	<!-- 广告管理 -->
+	<dubbo:reference id="advertManageService"
+		interface="com.zkkj.platform.advert.AdvertManageService" />
+	<!-- 广告商管理 -->
+	<dubbo:reference id="advertiserManageService"
+		interface="com.zkkj.platform.advertiser.AdvertiserManageService" />
+	<!-- 设备维护管理 -->
+	<dubbo:reference id="deviceMaintainService"
+		interface="com.zkkj.platform.device.DeviceMaintainService" />
+	<!-- 角色管理 -->
+	<dubbo:reference id="authRoleService"
+		interface="com.zkkj.platform.auth.AuthRoleService" />
+	<!-- 权限管理接口 -->
+	<dubbo:reference id="authPrivilegeService" timeout="30000"
+		interface="com.zkkj.platform.auth.AuthPrivilegeService" />
+	<!-- 菜单管理接口 -->
+	<dubbo:reference id="authMenuService"
+		interface="com.zkkj.platform.auth.AuthMenuService" />
+	<!-- 导入航班计划 -->
+	<dubbo:reference id="importFlightInfoService" timeout="35000"
+		interface="com.zkkj.platform.importinfo.ImportFlightInfoService" />
+	<!-- 发布公告接口 -->
+	<dubbo:reference id="flightNoticeService"
+		interface="com.zkkj.platform.notice.FlightNoticeService" />
+	<!-- 发布公告接口 -->
+	<dubbo:reference id="personNoticeService"
+		interface="com.zkkj.platform.notice.PersonNoticeService" />
+
+</beans>

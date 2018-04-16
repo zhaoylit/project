@@ -1,0 +1,72 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Voicewo jQuery Plugin Demo</title>
+<link rel="stylesheet" type="text/css" href="voicewo.css?v=9">
+<script src="jquery-1.11.0.min.js" type="text/javascript"></script>
+<script src="jquery.voicewo.js?v=9" type="text/javascript"></script>
+<script src="kindeditor/kindeditor.js" type="text/javascript"></script>
+</head>
+
+<body>
+<table width="700" border="0" align="center" cellpadding="0" cellspacing="0">
+    <tr>
+        <td>
+        	<textarea name="content" id="content" style="width: 696px; height:180px;"></textarea>
+            <div style="height:5px; line-height:5px;">&nbsp;</div>
+            <div id="btn"></div>
+        </td>
+    </tr>
+    <tr>
+    	<td>&nbsp;</td>
+    </tr>
+    <tr>
+    	<td>&nbsp;</td>
+    </tr> 
+    <tr>
+    	<td>&nbsp;</td>
+    </tr>              
+    <tr>
+        <td>
+        	<textarea name="content-kindeditor" id="content-kindeditor" style="width: 700px; height:230px;"></textarea>
+            <div style="height:5px; line-height:5px;">&nbsp;</div>
+            <div id="btn-kindeditor"></div>            
+        </td>
+    </tr>    
+</table>
+
+<script type="text/javascript">
+$(document).ready(function(){
+	
+	//语音云按钮
+	$('#btn').voicewo({
+		'width'			  : 92,
+		'height'		  : 25,
+		'outputId'		  : 'content',
+		'buttonImage'	  : 'btn.png',
+		'swf'			  : 'voicewo.swf'
+	});	
+	
+	var editor;
+	
+    KindEditor.ready(function(K) {
+    	editor = K.create('#content-kindeditor', {width : '700px', height  : '230px'});
+    });	
+		
+	//语音云按钮
+	$('#btn-kindeditor').voicewo({
+		'width'			  : 92,
+		'height'		  : 25,
+		'buttonImage'	  : 'btn.png',
+		'swf'			  : 'voicewo.swf',
+		'overrideEvents'  : ['onOutput'],
+		'onOutput'		  : function(value){
+			editor.insertHtml(value);
+		}
+	});		
+
+})
+</script>
+</body>
+</html>

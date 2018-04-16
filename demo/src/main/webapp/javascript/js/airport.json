@@ -1,0 +1,15 @@
+[{
+  "airportcode":"001",
+  "airportId":"PEK",
+  "airportName":"北京首都机场",
+  "deviceId":"001001",
+  "deviceName":"VIP厅1"
+},{
+  "airportcode":"2",
+  "airportId":"NAY",
+  "airportName":"北京南苑机场"
+},{
+  "airportcode":"3",
+  "airportId":"GHJ",
+  "airportName":"广州白云机场"
+}]

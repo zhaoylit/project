@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>    
+<beans xmlns="http://www.springframework.org/schema/beans" 
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"   
+       xmlns:context="http://www.springframework.org/schema/context"  
+       xmlns:mvc="http://www.springframework.org/schema/mvc"  
+       xmlns:websocket="http://www.springframework.org/schema/websocket"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd  
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd  
+        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+        http://www.springframework.org/schema/websocket http://www.springframework.org/schema/websocket/spring-websocket.xsd">  
+        
+    <!-- 启用springmvc注解 -->
+	<mvc:annotation-driven/>
+    <!-- 自动扫描的包名 ，使Spring支持自动检测组件，如注解的Controller-->  
+    <context:component-scan base-package="com.web.modules" /> 
+ 	<!-- 视图解析器：定义跳转的文件的后缀 -->
+ 	<bean id="viewResolve" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/views/"/>
+		<property name="suffix" value=".jsp"/><!-- 可为空，方便实现自己的依据扩展名来选择视图解释累的逻辑 -->
+ 	</bean>
+ 	<!-- 静态资源映射 -->
+    <mvc:resources mapping="/resources/**" location="/resources/" />
+    <mvc:resources mapping="/css/**" location="/resources/css/" />
+    <mvc:resources mapping="/js/**" location="/resources/js/" />
+    <mvc:resources mapping="/easyui/**" location="/resources/easyui/" />
+    <mvc:resources mapping="/plug/**" location="/resources/plug/" />
+    
+    <!-- 图片获取 maxUploadSize：设置最大限制 字节为单位,解决formData取不到值的问题-->
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver"> 		
+		<property name="maxUploadSize" value="102400000" />
+		<property name="maxInMemorySize" value="102400000" />
+	</bean>
+ 	<!--配置拦截器, 多个拦截器,顺序执行 -->
+ 	<mvc:interceptors>  
+        <mvc:interceptor>  
+             <!-- 匹配的是url路径， 如果不配置或/**,将拦截所有的Controller -->                    
+             <mvc:mapping path="/**/*.do"/>
+			 <!--以下地址不予拦截 -->
+             <mvc:exclude-mapping path="/**/login*" />
+             <mvc:exclude-mapping path="/**/quit*" />
+             <mvc:exclude-mapping path="/**/checkLogin*" />
+             <mvc:exclude-mapping path="/**/logout*" />
+             <mvc:exclude-mapping path="/**/verifyCode*" />
+             <mvc:exclude-mapping path="/**/websocket*" />
+            <bean class="com.web.common.interceptor.SystemInterceptor">
+            	<property name="loginUrl" value="/login" />
+            </bean>
+        </mvc:interceptor>
+	</mvc:interceptors>
+	
+ 	<!-- 全局异常配置 start -->
+    <bean id="exceptionResolver" class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">    
+       <property name="exceptionMappings">    
+           <props>    
+               <prop key="java.lang.Exception">errors/error</prop> 
+               <prop key="java.lang.Throwable">errors/err</prop>    
+           </props>    
+        </property>    
+        <property name="statusCodes">    
+            <props>    
+                <prop key="errors/error">500</prop>
+                <prop key="errors/404">404</prop>    
+            </props>    
+        </property>    
+        <!-- 设置日志输出级别，不定义则默认不输出警告等错误日志信息 -->    
+        <property name="warnLogCategory" value="WARN"></property>    
+        <!-- 默认错误页面，当找不到上面mappings中指定的异常对应视图时，使用本默认配置 -->    
+        <property name="defaultErrorView" value="errors/error"></property>		
+        <!-- 默认HTTP状态码 -->
+        <property name="defaultStatusCode" value="500"></property>
+   </bean> 
+    <!-- 全局异常配置 end -->
+ 	<!-- 	socket处理类和握手协议的配置 -->
+	<bean id="websocket" class="com.web.common.websocket.WebsocketEndPoint"/>  
+    <websocket:handlers >  
+        <websocket:mapping path="/websocket" handler="websocket"/>  
+        <websocket:handshake-interceptors>
+        	<bean class="com.web.common.websocket.HandshakeInterceptor"/>  
+        </websocket:handshake-interceptors>  
+    </websocket:handlers>
+    <!-- 配置websocket消息的最大缓冲区长度 -->
+    <bean class="org.springframework.web.socket.server.standard.ServletServerContainerFactoryBean">
+	    <property name="maxTextMessageBufferSize" value="8192"/>
+	    <property name="maxBinaryMessageBufferSize" value="8192"/>
+	</bean>
+</beans>

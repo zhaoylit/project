@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Title</title>
+    <meta name="content-type" content="text/html; charset=UTF-8"/>
+</head>
+<body>
+    <!--/*@thymesVar id="name" type="java.lang.String"*/-->
+	<!--     <p th:text="扫码登录" ></p>     -->
+    <script src="/js/aes.js"></script>
+    <script src="/js/eventsource.js"></script> 
+    <script type="text/javascript">
+    	var url = "http://172.16.255.147:9099/sse/";
+    	var uuid = "";
+    	var source1;
+    	if(typeof(EventSource)!=="undefined"){
+    		var source = new EventSource(url + 'push/' + guid());
+        	source.onopen = function(event) {
+        		console.log("Connection to server opened.");
+        	};
+        	source.onmessage = function(event) {
+        		  var data = event.data;
+        		  var origin = event.origin;
+        		  var lastEventId = event.lastEventId;
+			      var json = JSON.parse(data);
+        		  var element = document.getElementById('myimage');
+        		  element.src = "data:image/jpg;base64," + Decrypt(json.base64);
+        		  element.style.display = "block";
+        		  document.getElementById('divShow').style.display = "block";
+        		  uuid = json.uuid;
+        		  
+        		  initResultMonitor();
+        	};
+        	source.onerror=function()
+        	{
+        		console.log("EventSource failed.");
+        	};
+    	}
+    	else{
+            alert("抱歉，你的浏览器不支持 server-sent 事件...");
+    	}
+    	
+    	function initResultMonitor(){
+    		if(source1 != null){
+    			source1.close();
+    		}
+    		setTimeout(function(){
+    			//查询扫码结果
+        		source1 = new EventSource(url + 'result/' + uuid);
+        		source1.onopen = function(event) {
+    	      		console.log("Connection to server opened.");
+    	      	};
+    	      	source1.onmessage = function(event) {
+    	      		  var data = event.data;
+    	      		  var json = JSON.parse(data);
+    	      		  console.log("result-----------" + json.result);
+    	      		  if(json.result == "1"){
+    	      			var element = document.getElementById('duihao');
+    	        		element.style.display = "block";
+    	        		
+    	        		/*
+    	        		    此处存cokies
+    	        		*/
+    	        		
+    	      			//扫码成功，跳转成功
+    	      			setTimeout(function(){
+        	      			location.href=url+"success/"+json.uuid;
+    	      			},2000);
+    	      		  }
+    	      	};
+    	      	source1.onerror=function()
+    	      	{
+    	      		console.log("EventSource failed.");
+    	      	};
+    		},500);
+    	}
+    	function S4() {
+   		   return (((1+Math.random())*0x10000)|0).toString(16).substring(1);
+   		}
+   		function guid() {
+   		   return (S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4());
+   		}
+    	function Encrypt(word){  
+            var key = CryptoJS.enc.Utf8.parse("abcdefgabcdefg12");   
+     
+            var srcs = CryptoJS.enc.Utf8.parse(word);  
+            var encrypted = CryptoJS.AES.encrypt(srcs, key, {mode:CryptoJS.mode.ECB,padding: CryptoJS.pad.Pkcs7});  
+            return encrypted.toString();  
+       }  
+       function Decrypt(word){  
+            var key = CryptoJS.enc.Utf8.parse("abcdefgabcdefg12");   
+     
+            var decrypt = CryptoJS.AES.decrypt(word, key, {mode:CryptoJS.mode.ECB,padding: CryptoJS.pad.Pkcs7});  
+            return CryptoJS.enc.Utf8.stringify(decrypt).toString();  
+       }  
+    </script>
+    <div id="divShow" style="width:200px;height:230px;border:1px solid black;display:none;margin-left:200px;margin:0 auto;margin-top:100px;">
+    	<img id="duihao" src="/img/duihao.jpg" style="width:50px;height:50px;position:absolute;margin:75px 0 0 75px;display:none;"/>
+    	<img id="myimage" src="" style="width:200px;height:200px;"/>
+    	<div style="width:200px;height:25px;border:0px solid black;text-align:center;font-size:13px;">
+    		请打开客户端“扫一扫”
+    	</div>
+    </div>
+</body>
+</html>

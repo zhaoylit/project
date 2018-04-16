@@ -1,0 +1,21 @@
+/* 	 toast提示 */
+	#toast{
+	position: fixed;
+	top: 30%;
+	left: 50%;
+	width: 200px;
+	margin-left: -100px;
+	border: 1px solid #666;
+	background-color: black;
+	padding: 10px 0 ;
+	text-align:center;
+	opacity: .9;
+	border-radius: 5px;
+	color:white;
+	/*The good stuff */
+	-webkit-transition: opacity 0.5s ease-out; /* Saf3.2+, Chrome */
+	-moz-transition: opacity 0.5s ease-out; /* FF4+ */
+	-ms-transition: opacity 0.5s ease-out; /* IE10? */
+	-o-transition: opacity 0.5s ease-out; /* Opera 10.5+ */
+	transition: opacity 0.5s ease-out;
+}

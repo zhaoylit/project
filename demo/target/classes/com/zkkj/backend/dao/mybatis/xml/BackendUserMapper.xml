@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zkkj.backend.dao.mybatis.mapper.BackendUserMapper" >
+  <resultMap id="BaseResultMap" type="com.zkkj.backend.entity.BackendUser" >
+    <id column="operatorId" property="operatorId" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="password" property="password" jdbcType="VARCHAR" />
+    <result column="referenceId" property="referenceId" jdbcType="VARCHAR" />
+    <result column="referenceType" property="referenceType" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="VARCHAR" />
+    <result column="loginIP" property="loginIP" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="VARCHAR" />
+    <result column="addedTime" property="addedTime" jdbcType="TIMESTAMP" />
+    <result column="loginTime" property="loginTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    operatorId, name, password, referenceId, referenceType, type, loginIP, status, addedTime, 
+    loginTime
+  </sql>
+  <select id="queryBackendUserList" parameterType="com.zkkj.backend.entity.BackendUser" resultMap="BaseResultMap">
+	   select 
+	    <include refid="Base_Column_List" />
+	    from backend_user
+	   <where>
+	     <if test="name!=null and name != ''" >
+	        name = #{name,jdbcType=VARCHAR}
+	     </if>
+         <if test="password!=null and password != ''" >
+	        and password = #{password,jdbcType=VARCHAR}
+	     </if>
+	     <if test="referenceId!=null and referenceId != ''" >
+	        and referenceId = #{referenceId,jdbcType=VARCHAR}
+	     </if>
+	     <if test="referenceType!=null and referenceType != ''" >
+	        and referenceType = #{referenceType,jdbcType=VARCHAR}
+	     </if>
+	     <if test="type!=null and type != ''" >
+	        and type = #{type,jdbcType=VARCHAR}
+	     </if>
+	   </where>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from backend_user
+    where operatorId = #{operatorId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from backend_user
+    where operatorId = #{operatorId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.zkkj.backend.entity.BackendUser" >
+    <selectKey resultType="java.lang.Integer" keyProperty="operatorId" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into backend_user (operatorId, name, password, 
+      referenceId, referenceType, type, 
+      loginIP, status, addedTime, 
+      loginTime)
+    values (#{operatorId,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
+      #{referenceId,jdbcType=VARCHAR}, #{referenceType,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR}, 
+      #{loginIP,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, now(),now())
+  </insert>
+  <insert id="insertSelective" parameterType="com.zkkj.backend.entity.BackendUser" >
+    <selectKey resultType="java.lang.Integer" keyProperty="operatorId" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into backend_user
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      operatorId,
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="password != null" >
+        password,
+      </if>
+      <if test="referenceId != null" >
+        referenceId,
+      </if>
+      <if test="referenceType != null" >
+        referenceType,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      <if test="loginIP != null" >
+        loginIP,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="loginTime != null" >
+        loginTime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      #{operatorId,jdbcType=INTEGER},
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null" >
+        #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="referenceId != null" >
+        #{referenceId,jdbcType=VARCHAR},
+      </if>
+      <if test="referenceType != null" >
+        #{referenceType,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="loginIP != null" >
+        #{loginIP,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="loginTime != null" >
+        #{loginTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zkkj.backend.entity.BackendUser" >
+    update backend_user
+    <set >
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null" >
+        password = #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="referenceId != null" >
+        referenceId = #{referenceId,jdbcType=VARCHAR},
+      </if>
+      <if test="referenceType != null" >
+        referenceType = #{referenceType,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        type = #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="loginIP != null" >
+        loginIP = #{loginIP,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="loginTime != null" >
+        loginTime = #{loginTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where operatorId = #{operatorId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zkkj.backend.entity.BackendUser" >
+    update backend_user
+    set name = #{name,jdbcType=VARCHAR},
+      password = #{password,jdbcType=VARCHAR},
+      referenceId = #{referenceId,jdbcType=VARCHAR},
+      referenceType = #{referenceType,jdbcType=VARCHAR},
+      type = #{type,jdbcType=VARCHAR},
+      loginIP = #{loginIP,jdbcType=VARCHAR},
+      status = #{status,jdbcType=VARCHAR},
+      loginTime = #{loginTime,jdbcType=TIMESTAMP}
+    where operatorId = #{operatorId,jdbcType=INTEGER}
+  </update>
+   <insert id="insertUserRole" parameterType="map" >
+    INSERT INTO authority_user_role (
+		operatorId,
+		roleId,
+		addedTime
+	)
+	VALUES
+	(
+		#{operatorId},
+		#{roleId},
+		now()
+	)    
+  </insert>
+</mapper>

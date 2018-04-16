@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+        PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+
+<generatorConfiguration>
+    <classPathEntry
+            location="G:/Work/soft/mavenRepos/repository/mysql/mysql-connector-java/5.1.22/mysql-connector-java-5.1.22.jar"/>
+    <context id="my" defaultModelType="flat" targetRuntime="MyBatis3">
+        <commentGenerator>
+            <property name="suppressDate" value="true"/>
+            <property name="suppressAllComments" value="true"/>
+        </commentGenerator>
+
+        <jdbcConnection driverClass="com.mysql.jdbc.Driver"
+                        connectionURL="jdbc:mysql://47.92.33.158:3306/zkkj" userId="root"
+                        password="zkkj777777--"/>
+
+        <javaModelGenerator targetPackage="com.zkkj.backend.entity.biz"
+                            targetProject="G:/Work/NEWSVN/zkkjweb2-0/src/main/java">
+            <property name="enableSubPackages" value="false"/>
+            <property name="trimStrings" value="true"/>
+        </javaModelGenerator>
+
+        <sqlMapGenerator targetPackage="com.zkkj.backend.dao.mybatis.xml.biz"
+                         targetProject="G:/Work/NEWSVN/zkkjweb2-0/src/main/java">
+            <property name="enableSubPackages" value="false"/>
+        </sqlMapGenerator>
+
+        <javaClientGenerator targetPackage="com.zkkj.backend.dao.mybatis.mapper.biz"
+                             targetProject="G:/Work/NEWSVN/zkkjweb2-0/src/main/java" type="XMLMAPPER">
+            <property name="enableSubPackages" value="true"/>
+        </javaClientGenerator>
+
+         <table schema="kaixin" tableName="zkkj_notice_person" domainObjectName="NoticePerson" 
+               enableCountByExample="false" enableUpdateByExample="false"
+               enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false">
+	         <property name="useActualColumnNames" value="true" />
+	        <generatedKey column="id" sqlStatement="Mysql"/>
+	         <!-- <ignoreColumn column="updateTime"/>  忽略的列-->    
+        </table>
+
+    </context>
+</generatorConfiguration>

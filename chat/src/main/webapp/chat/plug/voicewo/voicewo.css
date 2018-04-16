@@ -1,0 +1,162 @@
+/*
+voicewo
+Copyright (c) 2014 yufan
+Email yufan1029@qq.com
+*/
+
+/* vc-tip */
+.vc-tip {
+	width: auto;
+	position: absolute;
+	padding: 6px 10px 5px;
+*padding: 7px 10px 4px;
+	line-height: 16px;
+	color: #444;
+	font-size: 14px;
+	font-family: STHeiti,"Microsoft Yahei","微软雅黑",Arial,sans-serif;	
+	background-color: #fff;
+	border: solid 1px #b0b0b0;
+	border-radius: 3px;
+	box-shadow: 0 0 2px #ddd;
+	display: none;
+}
+.vc-tip-arrow {
+	position: absolute;
+	overflow: hidden;
+	font-style: normal;
+	font-family: simsun;
+	font-size: 12px;
+	text-shadow:0 0 2px #ccc;
+}
+.vc-tip-arrow em, .vc-tip-arrow i {
+	position: absolute;
+	left:0;
+	top:0;
+	font-style: normal;
+}
+.vc-tip-arrow em {
+	color: #b0b0b0;
+}
+.vc-tip-arrow i {
+	color: #fff;
+	text-shadow:none;
+}
+/* top */
+.vc-tip-top .vc-tip-arrow {
+	height: 6px;
+	width: 12px;
+	left: 50%;
+	margin-left: -6px;	
+	bottom: -6px;	
+}
+.vc-tip-top .vc-tip-arrow em {
+	top: -8px;	
+}
+.vc-tip-top .vc-tip-arrow i {
+	top: -9px;	
+}
+/* bottom */
+.vc-tip-bottom .vc-tip-arrow {
+	height: 6px;
+	width: 12px;
+	left: 50%;
+	margin-left: -6px;	
+	top: -6px;	
+}
+.vc-tip-bottom .vc-tip-arrow em {
+	top: -1px;	
+}
+.vc-tip-bottom .vc-tip-arrow i {
+	top: 0px;	
+}
+/* left */
+.vc-tip-left .vc-tip-arrow {
+	height: 12px;
+	width: 6px;
+	top: 50%;
+	margin-top: -6px;	
+	right: -6px;	
+}
+.vc-tip-left .vc-tip-arrow em {
+	left: -6px;	
+}
+.vc-tip-left .vc-tip-arrow i {
+	left: -7px;	
+}
+/* right */
+.vc-tip-right .vc-tip-arrow {
+	height: 12px;
+	width: 6px;
+	top: 50%;
+	margin-top: -6px;	
+	left: -6px;	
+}
+.vc-tip-right .vc-tip-arrow em {
+	left: 1px;	
+}
+.vc-tip-right .vc-tip-arrow i {
+	left: 2px;	
+}
+/* content */
+.vc-tip-content {
+	width: 90px;
+	text-align: center;	
+}
+.vc-tip-content-recording {
+	width: 90px;
+	height: 4px;
+	background-color: #f3f3f3;
+	margin: 6px 0 6px 0;
+}
+.vc-tip-content-recording-width {
+	width: 0%;
+	height: 4px;
+	background-color: #666;
+}
+.vc-tip-content-recoging {
+	width: 22px;
+	height: 22px;
+	background: url(loading.gif) no-repeat 0 0;
+	margin: 6px auto 6px auto;
+}
+.vc-tip-content-title {
+	height: auto;
+	line-height: 20px;
+	margin: 6px 0 10px 0;
+}
+.vc-tip-content-btn-box {
+	margin: 5px 0;
+}
+.vc-tip-content-btn {
+	display: inline-block;
+	min-width: 36px;
+	border: 1px solid #DCDCDC;
+	border: 1px solid rgba(0, 0, 0, 0.1);
+	text-align: center;
+	color: #444;
+	font-size: 12px;
+	height: 23px;
+	padding: 0 4px;
+	line-height: 23px;
+	text-decoration: none;	
+	-webkit-border-radius: 2px;
+	-moz-border-radius: 2px;
+	border-radius: 2px;
+	-webkit-transition: all 0.218s;
+	-moz-transition: all 0.218s;
+	-o-transition: all 0.218s;
+	transition: all 0.218s;
+	background-color: #F5F5F5;
+	background-image: -webkit-gradient(linear,left top,left bottom,from(#F5F5F5),to(#F1F1F1));
+	background-image: -webkit-linear-gradient(top,#F5F5F5,#F1F1F1);
+	background-image: -moz-linear-gradient(top,#F5F5F5,#F1F1F1);
+	background-image: -ms-linear-gradient(top,#F5F5F5,#F1F1F1);
+	background-image: -o-linear-gradient(top,#F5F5F5,#F1F1F1);
+	background-image: linear-gradient(top,#F5F5F5,#F1F1F1);
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#f5f5f5',EndColorStr='#f1f1f1');
+}
+.vc-tip-content-btn:active {
+	-webkit-box-shadow: inset 0 0 1px rgba(0, 0, 0, 0.3);
+	-moz-box-shadow: inset 0 0 1px rgba(0,0,0,0.3);
+	box-shadow: inset 0 0 1px rgba(0, 0, 0, 0.3);
+}

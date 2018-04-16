@@ -1,0 +1,5 @@
+1.修改pom.xml文件的项目名称
+2.修改web.xml文件的项目名称
+3.选中项目，roperties->web project settings的项目名称
+4.修改tomcatconf文件夹下面server.xml里面Context path
+	

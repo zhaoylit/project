@@ -1,0 +1,328 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zkkj.backend.dao.mybatis.mapper.SysResourceInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.zkkj.backend.entity.SysResourceInfo" >
+    <id column="resourceId" property="resourceId" jdbcType="INTEGER" />
+    <result column="operatorId" property="operatorId" jdbcType="INTEGER" />
+    <result column="businessId" property="businessId" jdbcType="INTEGER" />
+    <result column="businessType" property="businessType" jdbcType="VARCHAR" />
+    <result column="resourceType" property="resourceType" jdbcType="VARCHAR" />
+    <result column="resourceSeq" property="resourceSeq" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="originalName" property="originalName" jdbcType="VARCHAR" />
+    <result column="fileSize" property="fileSize" jdbcType="INTEGER" />
+    <result column="status" property="status" jdbcType="VARCHAR" />
+    <result column="existMiddle" property="existMiddle" jdbcType="VARCHAR" />
+    <result column="defaultMiddle" property="defaultMiddle" jdbcType="VARCHAR" />
+    <result column="duration" property="duration" jdbcType="INTEGER" />
+    <result column="addedTime" property="addedTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.zkkj.backend.entity.SysResourceInfo" extends="BaseResultMap" >
+    <result column="resourcePath" property="resourcePath" jdbcType="LONGVARCHAR" />
+    <result column="resourceDesc" property="resourceDesc" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    resourceId, operatorId, businessId, businessType, resourceType, resourceSeq, name, 
+    originalName, fileSize, status, existMiddle, defaultMiddle, duration, 
+    addedTime
+  </sql>
+  <sql id="Blob_Column_List" >
+    resourcePath, resourceDesc
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from sys_resource_info
+    where resourceId = #{resourceId,jdbcType=INTEGER}
+  </select>
+  
+   <select id="getSysResourceList" parameterType="map" resultMap="ResultMapWithBLOBs">
+       select  
+        <include refid="Base_Column_List" />
+    	,
+    	<include refid="Blob_Column_List" /> from sys_resource_info 
+     where 1=1 
+     <if test="operatorId != null and operatorId!=0 " >
+        and operatorId = #{operatorId,jdbcType=INTEGER},
+      </if>
+      <if test="businessId != null and businessId!= 0 " >
+        and  businessId = #{businessId,jdbcType=INTEGER},
+      </if>
+      <if test="businessType != null and businessType!=''" >
+        and businessType = #{businessType,jdbcType=VARCHAR},
+      </if>
+      <if test="resourceType != null and resourceType!=''" >
+        and resourceType = #{resourceType,jdbcType=VARCHAR},
+      </if>
+      <if test="resourceSeq != null and resourceSeq!=''" >
+        and resourceSeq = #{resourceSeq,jdbcType=INTEGER},
+      </if>
+      <if test="name != null and name != ''" >
+        and name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="originalName != null and originalName!=''" >
+        and originalName = #{originalName,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null and status !='' " >
+        and #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="existMiddle != null and existMiddle!='' " >
+        and existMiddle = #{existMiddle,jdbcType=VARCHAR},
+      </if>
+      <if test="defaultMiddle != null and defaultMiddle!=''" >
+        and defaultMiddle = #{defaultMiddle,jdbcType=VARCHAR},
+      </if>
+      order by createTime desc limit ${(pageIndex - 1) * pageSize},${pageSize}
+       
+   </select> 
+   
+   <select id="getSysResourceListCount" parameterType="map" resultType="int">
+       select count(*) count from sys_resource_info 
+     where 1=1 
+     <if test="operatorId != null and operatorId!=0 " >
+        and operatorId = #{operatorId,jdbcType=INTEGER},
+      </if>
+      <if test="businessId != null and businessId!= 0 " >
+        and  businessId = #{businessId,jdbcType=INTEGER},
+      </if>
+      <if test="businessType != null and businessType!=''" >
+        and businessType = #{businessType,jdbcType=VARCHAR},
+      </if>
+      <if test="resourceType != null and resourceType!=''" >
+        and resourceType = #{resourceType,jdbcType=VARCHAR},
+      </if>
+      <if test="resourceSeq != null and resourceSeq!=''" >
+        and resourceSeq = #{resourceSeq,jdbcType=INTEGER},
+      </if>
+      <if test="name != null and name != ''" >
+        and name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="originalName != null and originalName!=''" >
+        and originalName = #{originalName,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null and status !='' " >
+        and #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="existMiddle != null and existMiddle!='' " >
+        and existMiddle = #{existMiddle,jdbcType=VARCHAR},
+      </if>
+      <if test="defaultMiddle != null and defaultMiddle!=''" >
+        and defaultMiddle = #{defaultMiddle,jdbcType=VARCHAR},
+      </if>
+      order by createTime desc limit ${(pageIndex - 1) * pageSize},${pageSize}
+       
+   </select> 
+   
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from sys_resource_info
+    where resourceId = #{resourceId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.zkkj.backend.entity.SysResourceInfo" >
+    <selectKey resultType="java.lang.Integer" keyProperty="resourceId" order="BEFORE" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into sys_resource_info (resourceId, operatorId, businessId, 
+      businessType, resourceType, resourceSeq, 
+      name, originalName, fileSize, 
+      status,existMiddle, 
+      defaultMiddle, duration, addedTime, 
+      resourcePath, resourceDesc)
+    values (#{resourceId,jdbcType=INTEGER}, #{operatorId,jdbcType=INTEGER}, #{businessId,jdbcType=INTEGER}, 
+      #{businessType,jdbcType=VARCHAR}, #{resourceType,jdbcType=VARCHAR}, #{resourceSeq,jdbcType=INTEGER}, 
+      #{name,jdbcType=VARCHAR}, #{originalName,jdbcType=VARCHAR}, #{fileSize,jdbcType=INTEGER}, 
+      #{status,jdbcType=VARCHAR}, #{existMiddle,jdbcType=VARCHAR}, 
+      #{defaultMiddle,jdbcType=VARCHAR}, #{duration,jdbcType=INTEGER}, #{addedTime,jdbcType=TIMESTAMP}, 
+      #{resourcePath,jdbcType=LONGVARCHAR}, #{resourceDesc,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.zkkj.backend.entity.SysResourceInfo" >
+    <selectKey resultType="java.lang.Integer" keyProperty="resourceId" order="BEFORE" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into sys_resource_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      resourceId,
+      <if test="operatorId != null" >
+        operatorId,
+      </if>
+      <if test="businessId != null" >
+        businessId,
+      </if>
+      <if test="businessType != null" >
+        businessType,
+      </if>
+      <if test="resourceType != null" >
+        resourceType,
+      </if>
+      <if test="resourceSeq != null" >
+        resourceSeq,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="originalName != null" >
+        originalName,
+      </if>
+      <if test="fileSize != null" >
+        fileSize,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="existMiddle != null" >
+        existMiddle,
+      </if>
+      <if test="defaultMiddle != null" >
+        defaultMiddle,
+      </if>
+      <if test="duration != null" >
+        duration,
+      </if>
+      <if test="addedTime != null" >
+        addedTime,
+      </if>
+      <if test="resourcePath != null" >
+        resourcePath,
+      </if>
+      <if test="resourceDesc != null" >
+        resourceDesc,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      #{resourceId,jdbcType=INTEGER},
+      <if test="operatorId != null" >
+        #{operatorId,jdbcType=INTEGER},
+      </if>
+      <if test="businessId != null" >
+        #{businessId,jdbcType=INTEGER},
+      </if>
+      <if test="businessType != null" >
+        #{businessType,jdbcType=VARCHAR},
+      </if>
+      <if test="resourceType != null" >
+        #{resourceType,jdbcType=VARCHAR},
+      </if>
+      <if test="resourceSeq != null" >
+        #{resourceSeq,jdbcType=INTEGER},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="originalName != null" >
+        #{originalName,jdbcType=VARCHAR},
+      </if>
+      <if test="fileSize != null" >
+        #{fileSize,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="existMiddle != null" >
+        #{existMiddle,jdbcType=VARCHAR},
+      </if>
+      <if test="defaultMiddle != null" >
+        #{defaultMiddle,jdbcType=VARCHAR},
+      </if>
+      <if test="duration != null" >
+        #{duration,jdbcType=INTEGER},
+      </if>
+      <if test="addedTime != null" >
+        #{addedTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="resourcePath != null" >
+        #{resourcePath,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="resourceDesc != null" >
+        #{resourceDesc,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zkkj.backend.entity.SysResourceInfo" >
+    update sys_resource_info
+    <set >
+      <if test="operatorId != null" >
+        operatorId = #{operatorId,jdbcType=INTEGER},
+      </if>
+      <if test="businessId != null" >
+        businessId = #{businessId,jdbcType=INTEGER},
+      </if>
+      <if test="businessType != null" >
+        businessType = #{businessType,jdbcType=VARCHAR},
+      </if>
+      <if test="resourceType != null" >
+        resourceType = #{resourceType,jdbcType=VARCHAR},
+      </if>
+      <if test="resourceSeq != null" >
+        resourceSeq = #{resourceSeq,jdbcType=INTEGER},
+      </if>
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="originalName != null" >
+        originalName = #{originalName,jdbcType=VARCHAR},
+      </if>
+      <if test="fileSize != null" >
+        fileSize = #{fileSize,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="existMiddle != null" >
+        existMiddle = #{existMiddle,jdbcType=VARCHAR},
+      </if>
+      <if test="defaultMiddle != null" >
+        defaultMiddle = #{defaultMiddle,jdbcType=VARCHAR},
+      </if>
+      <if test="duration != null" >
+        duration = #{duration,jdbcType=INTEGER},
+      </if>
+      <if test="addedTime != null" >
+        addedTime = #{addedTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="resourcePath != null" >
+        resourcePath = #{resourcePath,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="resourceDesc != null" >
+        resourceDesc = #{resourceDesc,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where resourceId = #{resourceId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.zkkj.backend.entity.SysResourceInfo" >
+    update sys_resource_info
+    set operatorId = #{operatorId,jdbcType=INTEGER},
+      businessId = #{businessId,jdbcType=INTEGER},
+      businessType = #{businessType,jdbcType=VARCHAR},
+      resourceType = #{resourceType,jdbcType=VARCHAR},
+      resourceSeq = #{resourceSeq,jdbcType=INTEGER},
+      name = #{name,jdbcType=VARCHAR},
+      originalName = #{originalName,jdbcType=VARCHAR},
+      fileSize = #{fileSize,jdbcType=INTEGER},
+      status = #{status,jdbcType=VARCHAR},
+      existMiddle = #{existMiddle,jdbcType=VARCHAR},
+      defaultMiddle = #{defaultMiddle,jdbcType=VARCHAR},
+      duration = #{duration,jdbcType=INTEGER},
+      addedTime = #{addedTime,jdbcType=TIMESTAMP},
+      resourcePath = #{resourcePath,jdbcType=LONGVARCHAR},
+      resourceDesc = #{resourceDesc,jdbcType=LONGVARCHAR}
+    where resourceId = #{resourceId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zkkj.backend.entity.SysResourceInfo" >
+    update sys_resource_info
+    set operatorId = #{operatorId,jdbcType=INTEGER},
+      businessId = #{businessId,jdbcType=INTEGER},
+      businessType = #{businessType,jdbcType=VARCHAR},
+      resourceType = #{resourceType,jdbcType=VARCHAR},
+      resourceSeq = #{resourceSeq,jdbcType=INTEGER},
+      name = #{name,jdbcType=VARCHAR},
+      originalName = #{originalName,jdbcType=VARCHAR},
+      fileSize = #{fileSize,jdbcType=INTEGER},
+      status = #{status,jdbcType=VARCHAR},
+      existMiddle = #{existMiddle,jdbcType=VARCHAR},
+      defaultMiddle = #{defaultMiddle,jdbcType=VARCHAR},
+      duration = #{duration,jdbcType=INTEGER},
+      addedTime = #{addedTime,jdbcType=TIMESTAMP}
+    where resourceId = #{resourceId,jdbcType=INTEGER}
+  </update>
+</mapper>

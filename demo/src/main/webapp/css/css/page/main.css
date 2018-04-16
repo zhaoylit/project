@@ -1,0 +1,241 @@
+
+
+/*--------form表单的样式修改-------*/
+.Form {
+	width: 70%;
+	margin: 40px auto;
+	padding: 2% 5%;
+	display: block;
+}
+
+.Form>p {
+	font-size: 1.0rem;
+	margin-bottom: 2%;
+}
+
+.Form>div {
+	padding-top: 1%;
+	padding-bottom: 1%;
+}
+
+.Form>div>label {
+	/*text-align: right;*/
+	font-size: 1.1rem;
+}
+
+.Form>div>input {
+	width: 100%;
+	height: 42px;
+}
+
+.btn {
+	display: block !important;
+	text-align: center;
+	margin-top: 20px;
+}
+
+.airport input {
+	height: 30px;
+}
+
+.Form input {
+	border: solid 1px #95b8e7;
+}
+
+.Form  button {
+	height: 30px;
+	margin: 0 1% 1% 1%;
+}
+
+/*--------找人页面的样式-------*/
+#notice>div {
+	padding: 0px;
+	width: 100%;
+	margin-top: 5%;
+}
+
+#notice input {
+	border-radius: 6px;
+	padding-top: 6px;
+	width: 100%;
+	display: block;
+}
+
+#notice label {
+	display: block;
+}
+
+#notice .btn {
+	text-align: right;
+}
+
+.btn{
+	display:block;
+	width:50% !important;
+	float:right;
+}
+
+.btn a {
+	padding:0 2%;
+	dispaly:inline-block;
+	background-color: #0864aa;
+	color: #ffffff;
+	border: solid 1px #0864aa;
+	border-radius: 5px;
+}
+/*------航班提醒页面-----*/
+
+/*-----右边表格的样式----------*/
+
+.textbox{width:100% !important;}
+#notice_flight {
+	width: 90%;
+	padding: 0px;
+	margin: 0px auto
+}
+
+#fs, #resa_Ch, #resa_En {
+	border: solid 1px #c2cad8;
+	width: 100%;
+	height: 36px;
+	border-radius: 6px;
+	margin-top: 15px;
+}
+
+.flight_left input {
+	display: block;
+	width: 100% !important;
+	padding: 0px !important;
+	border-radius: 8px !important;
+	margin-top: 15px;
+}
+
+#notice_flight input {
+	display: block;
+	width: 100% !important;
+	padding-left: 0px !important;
+	border-radius: 8px !important;
+	margin-top: 10px;
+}
+
+#notice_flight label {
+	display: block;
+}
+
+#notice_flight>div {
+	margin-bottom: 2%;
+}
+
+#notice_flight .btn {
+	text-align: right;
+}
+
+#notice_flight .btn a {
+	
+}
+
+#per_sub {
+	display: inline-block;
+	height: 30px;
+	line-height: 30px;
+	text-align: center;
+	font-size: 0.9rem
+}
+
+#cancel {
+	display: inline-block;
+	height: 30px;
+	line-height: 30px;
+	text-align: center;
+	font-size: 0.9rem;
+}
+
+#per_sub:hover, #cancel:hover {
+	cursor: pointer;
+}
+/*-----------航班延误的样式修改-----------*/
+.reason {
+	width: 100%;
+	overflow: hidden;
+	display: flex;
+}
+
+.reason_left {
+	width: 40%;
+	float: left;
+}
+
+.reason_right {
+	width: 50%;
+	float: left;
+	margin-left: 7%;
+}
+
+.reason label {
+	font-size: 0.9rem;
+	font-family: "微软雅黑"
+}
+
+/*------服务器的远程更新页面样式-------*/
+/*#machine{border:solid 1px red;}*/
+#machine label {
+	display: block
+}
+
+/*--------文件上传的所有页面进行的按钮样式修改*/
+#fli_message #per_sub {
+	width: 20%;
+}
+
+#fli_message #cancel {
+	width: 20%;
+}
+
+#flight_message #per_sub {
+	width: 20%;
+}
+
+#flight_message #cancel {
+	width: 20%;
+}
+
+#gate_message #per_sub {
+	width: 20%;
+}
+
+#gate_message #cancel {
+	width: 20%;
+}
+
+#machine #per_sub {
+	width: 20%;
+}
+
+#machine #cancel {
+	width: 20%;
+}
+
+
+
+/*-----------信息导入的页面的样式----------*/
+.msg{width:100%;overflow: hidden;display: flex}
+.msg_left{
+   width:40%;
+    float:left; 
+}
+.msg_left form{;width:90%;}
+.msg_right{
+    width:60%;
+    float:left;
+     border:solid 1px red;
+}
+.file>input{padding-left: 0px !important;height:30px !important;}
+
+#beginTime1{
+	width:100px !important;
+}
+.textbox-text{width:100px !important;}
+.databox{width:100px !important;}
+#test{border:solid 1px red;}
+#test input{width:100px !important;}
+

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zkkj.backend.dao.mybatis.mapper.AuthorityRolePrivilegeMapper"> 
+  <resultMap id="BaseResultMap" type="com.zkkj.backend.entity.AuthorityRolePrivilege">
+    <result column="roleId" jdbcType="INTEGER" property="roleId" />
+    <result column="privilegeId" jdbcType="INTEGER" property="privilegeId" />
+    <result column="addedTime" jdbcType="TIMESTAMP" property="addedTime" />
+    <result column="updateTime" jdbcType="TIMESTAMP" property="updateTime" />
+  </resultMap>
+  <insert id="insert" parameterType="com.zkkj.backend.entity.AuthorityRolePrivilege">
+    insert into authority_role_privilege (roleId, privilegeId, addedTime, 
+      updateTime)
+    values (#{roleId,jdbcType=INTEGER}, #{privilegeId,jdbcType=INTEGER}, #{addedTime,jdbcType=TIMESTAMP}, 
+      #{updateTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.zkkj.backend.entity.AuthorityRolePrivilege">
+    insert into authority_role_privilege
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="roleId != null">
+        roleId,
+      </if>
+      <if test="privilegeId != null">
+        privilegeId,
+      </if>
+      <if test="addedTime != null">
+        addedTime,
+      </if>
+      <if test="updateTime != null">
+        updateTime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="roleId != null">
+        #{roleId,jdbcType=INTEGER},
+      </if>
+      <if test="privilegeId != null">
+        #{privilegeId,jdbcType=INTEGER},
+      </if>
+      <if test="addedTime != null">
+        #{addedTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+</mapper>

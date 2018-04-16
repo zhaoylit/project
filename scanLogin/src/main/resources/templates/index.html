@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Title</title>
+    <meta charset="UTF-8"/>  
+    <style type="text/css">
+    table{border:1px solid black;border-right:0px;}
+    td{padding:5px; border-right:1px solid black;text-align:left;border-top:1px solid black;}
+    </style>
+    <script type="text/javascript" src="/js/jquery-1.11.1.min.js"></script>
+</head>
+<body>
+<div style="width:100%;text-align:center;">
+    <table align="center" cellspacing="0" cellpadding="0" style="width:800px;margin-top:100px;">
+    	<tr>
+    		<td style="border-top:0px;width: 150px;text-align:center;" colspan="2"><b>数据导出</b>：<a href="explain.do" target="_blank">数据库说明</a>&nbsp;&nbsp;<a href="direction.do" target="_blank">使用说明</a></td>
+    	</tr>
+	    <tr>
+		    <td>导出类型：</td>
+		    <td>
+		    	<select id="exportType">
+		    		<option value="1">数据导出</option>
+		    		<option value="2">统计导出</option>
+		    	</select>
+		    </td>
+	    </tr>
+	    <tr>
+	    	<td>
+	    		导出账户<font color="red">*</font>：
+	    	</td>
+	    	<td>
+	    		<input type="text" id="userName" value="" style="width:200px;"/>
+	    	</td>
+	    </tr>
+	    <tr>
+	    	<td>
+	    		用户id<font color="red">*</font>:
+	    	</td>
+	    	<td>
+	    		<input type="text" id="userId" value="" style="width:200px;"/>
+	    	</td>
+	    </tr>
+	    <tr>
+	    	<td>开始时间<font color="red">*</font>：</td>
+	    	<td>
+	    		<input type="text" id="beginTime" value="" style="width:200px;"/>
+	    	</td>
+	    </tr>
+	    <tr>
+	    	<td>结束时间<font color="red">*</font>：</td>
+	    	<td>
+	    		<input type="text" id="endTime" value="" style="width:200px;"/>
+	    	</td>
+	    </tr>
+	    <tr>
+	    	<td>
+	    		sql<font color="red">*</font>：
+	    	</td>
+	    	<td>
+	    		<textarea id="sql" style="width:650px;height:200px;"></textarea>
+	    	</td>
+	    </tr>
+	    <tr id="countSet" style="display:none;">
+	    	<td>
+	    		参数设置：
+	    	</td>
+	    	<td>
+	    		分组字段：name &nbsp;
+	    		排序字段：<input type="text" id="sortField" value="count" style="width:100px;"/>
+	    		统计条数：<input type="text" id="limit" value="10" style="width:100px;"/>
+	    	</td>
+	    </tr>
+	    <tr id="titleSet">
+	    	<td>
+	    		导出设置：
+	    	</td>
+	    	<td>
+	    		标题名称：<input type="text" id="title" value="" style="width:570px;height:25px;"/><br/>
+	    		查询列名：<input type="text" id="column" value="" style="width:570px;height:25px;margin-top:10px;"/>
+	    	</td>
+	    </tr>
+	    <tr>
+	    
+	    	<td>结果返回：</td>
+	    	<td>
+	    		<select id="resultType">
+		    		<option value="1">excel文件</option>
+		    		<option value="2">json字符串</option>
+	    		</select>
+	    	</td>
+	    </tr>
+	    <tr>
+	    	<td colspan="2" style="text-align:center;"><input type="button" id="submit" value="查询" style="width:100px;height:35px;"/></td> 
+	    </tr>  
+	    <tr>
+	    	<td>
+	    		输出区：
+	    	</td>
+	    	<td>
+	    		<div id="console" style="width:650px;height:200px;overflow:auto;"></div>
+	    	</td>
+	    </tr>
+	</table>
+	
+</div>
+<script th:inline="javascript">
+	$(function(){
+		if($("#exportType").val() == "1"){
+   			$("#countSet").hide();
+   			$("#resultType").val("1");
+			$("#resultType").attr("disabled",true);
+		}else{
+   			$("#countSet").show();
+   			$("#resultType").attr("disabled",false);
+		}
+	   	
+   		if($("#resultType").val() == "1"){
+   			$("#titleSet").show();
+   		}else{
+   			$("#titleSet").hide();
+   		}
+   		if($("#beginTime").val() == ""){
+   	   		$("#beginTime,#endTime").val(getNowDate());
+   		}
+	})
+     var guid;
+    /*<![CDATA[*/
+       var url = /*[[${returnPath}]]*/;
+   	/*]]>*/
+   	 /*<![CDATA[*/
+       var socket_url = /*[[${socketUrl}]]*/;
+   	/*]]>*/
+    if(typeof(WebSocket) == "undefined") {
+        alert("您的浏览器不支持WebSocket");
+    }else{
+    	guid = guid();
+    	var socket;
+        initSocket();
+    }
+    function initSocket(){
+       	socket = new WebSocket(socket_url + "?guid=" + guid);
+           /*
+            *监听三种状态的变化 。js会回调
+            */
+           socket.onopen = function(message) {
+              console.log("-----------------connect open");
+              //客户端连接成功,向后台发送心跳检测,每隔10秒发送一次
+        	   setInterval(function (){
+        	        var json = {};
+        	     	//定义json 发送消息  
+        	        var json = {};
+        	        json.guid = guid;
+        	        json.messageType = "beat";//心跳消息
+        	        socket.send(JSON.stringify(json));
+        	   },3000);
+           };
+           socket.onclose = function(message) {
+           	console.log("-----------------connect close");
+           	socket.close();
+           	initSocket();
+           };
+           socket.onmessage = function(message) {
+             var json = JSON.parse(message.data);
+             console.log(json);
+             var resultType = $("#resultType").val();
+             $("#console").append(json.message + "<br/>");
+             resizeScroll();
+           };
+           socket.onerror = function(message) {
+           	console.log("-----------------connect error:" + JSON.stringify(message));
+           	socket.close();
+           };
+       }
+   	function S4() {
+  		return (((1+Math.random())*0x10000)|0).toString(16).substring(1);
+  	}
+   	//生成唯一guid
+  	function guid() {
+  		return (S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4());
+  	}
+   	function resizeScroll(){
+   		$("#console").scrollTop(10000);
+   	}
+   	//提交
+   	$("#submit").click(function(){ 
+   		//清空 输入区
+   		$("#console").html("");
+   		var exportType = $("#exportType").val();
+   		var userName = $("#userName").val();
+   		var beginTime = $("#beginTime").val();
+   		var endTime = $("#endTime").val();
+   		var title = $("#title").val();
+   		var column = $("#column").val();
+   		var sql = $("#sql").val();  
+   		var resultType = $("#resultType").val();
+   		var sortField = $("#sortField").val(); 
+   		var limit = $("#limit").val();
+   		var userId = $("#userId").val();
+   		$.ajax({
+   			method:"post",
+   			url:"/export.do",
+   			data:{
+   				exportType:exportType,
+   				userName:userName,
+   				beginTime:beginTime,
+   				endTime:endTime,
+   				sql:sql,
+   				resultType:resultType,
+   				guid:guid,
+   				sortField:sortField,
+   				limit:limit,
+   				title:title,
+   				column:column,
+   				userId:userId,
+   			},
+   			dataType:"json",
+   			success:function(data){
+   				//取得下载路径 生成下载连接
+   				var userName = data.userName;
+   				var result = data.result;
+   				var url = data.downloadUrl;
+   				
+   				if(resultType == "1"){
+   	   				//生成下载路径
+   	                $("#console").append(url);
+                }else{
+               	 	//在控制台输出json结果
+   	                $("#console").append(result);
+                }
+   				resizeScroll();
+   			},
+   			error:function(e){
+   				console.log(e);
+   			}
+   		});
+   	});
+   	function getNowDate() {
+   	    var date = new Date();
+   	    var year = date.getFullYear();
+   	    var month = (date.getMonth()+1);
+   	    var day = date.getDate();
+   	    return year+ "" + (month.length = 1 ? "0"+month : month) + "" + (day.length = 1 ? "0"+day : day);
+   	}
+   	$("#exportType").change(function(){
+   		if($(this).val() == "1"){
+   			$("#countSet").hide();
+   			$("#resultType").val("1");
+   			$("#resultType").attr("disabled",true);
+   		}else{
+   			$("#countSet").show();
+   			$("#resultType").attr("disabled",false);
+   		}
+		$("#titleSet").show();
+   	});
+   	
+   	$("#resultType").change(function(){
+   		if($(this).val() == "1"){
+   			$("#titleSet").show();
+   		}else{
+   			$("#titleSet").hide();
+   		}
+   	});
+   </script>
+</body>
+</html>

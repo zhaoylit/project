@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Title</title>
+    <meta charset="UTF-8"/>  
+    <style type="text/css">
+    table{border:1px solid black;border-right:0px;}
+    td{padding:5px; border-right:1px solid black;text-align:left;border-top:1px solid black;}
+    </style>
+    <script type="text/javascript" src="/js/jquery-1.11.1.min.js"></script>
+</head>
+<body>
+<div style="width:800px;height:800px;margin:10px 0 0 10px;padding-left:20px;">
+<span style ="font-size: 20px;">1.</span>数据导出：查询账号日期范围内的数据并创建excel文件<br/>
+<div style="width:100%;padding-left:90px;line-height:30px;">
+	在导出设置里，标题名称（如下图所示）是生成excel的标题名称与下面的查询列名对应,每个逗号分隔开，一定是英文的逗号并且之前无空格<br/>
+	<img src="/img/title.png"/><br/>
+	例如：sql:select source,url from info limit 10;<br/>
+           标题名称：来源名称,连接<br/>
+           查询列名（sql中的查询字段）：source,url<br/>
+  	这样生成的excel就为来源名称和连接两列<br/>
+</div>
+<span style ="font-size: 20px;">2.</span>统计导出： 统计类型的数量生成excel或者json的格式，只适用于统计某种类型的数量，可以是多个数量<br/>
+<div style="width:100%;padding-left:90px;line-height:30px;">
+	2.1: excel导出<br/>
+	 <div style="width:100%;padding-left:90px;line-height:30px;">
+	 	 sql中的分组名称必须是name<br/>
+		   例如：select source as name,sum(negative 大于 0) as zm,sum(negative = 0) as zx,sum(negative 小于 0) as fm from info group by name;<br/>
+		   后台是把每天的name数量相加，然后按照排序字段排序取出设置的统计条数；<br/>
+		  导出设置和数据导出一样<br/>
+	 </div>
+	2.2：json导出<br/>
+	<div style="width:100%;padding-left:90px;line-height:30px;">
+  		  不生成文件，直接将数据以json格式展示在输出区域。<br/> 
+	</div>
+</div>
+<span style ="font-size: 20px;">3.</span>说明：<br/>
+	<div style="width:100%;padding-left:90px;line-height:30px;">
+		项目svn地址：<br/>
+		项目发布地址：192.168.185.97 /usr/local/tomcat7/webapps/<br/>
+		生成的下载文件地址：/usr/local/tomcat7/data/<br/>
+	</div>
+</div>
+</body>
+</html>

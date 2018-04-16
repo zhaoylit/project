@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="groupInfo" >
+	<select id="getGroupList" parameterType="java.util.Map" resultType = "java.util.Map">
+    	select 
+    	tg.* ,
+    	case when #{userId} is not null and  #{userId} != '' then
+    	(
+    			case when (SELECT count(0) FROM tb_group_user  tgu WHERE tgu.groupId = tg.id and tgu.userId = #{userId}) &gt; 0  then 1
+    			else 0
+    			end 
+    	)
+    	else 0
+    	end as isJoin,
+    	(SELECT count(0) FROM tb_group_user tgu WHERE tgu.groupId = tg.id) as userCount 
+    	from tb_group tg
+    	where 1 = 1
+    </select>
+    <select id="getGroupUserList" parameterType="java.util.Map" resultType="java.util.Map">
+    	SELECT tu.*
+		FROM tb_group_user tgu
+		LEFT JOIN tb_user tu ON  tu.id = tgu.userId
+    	where groupId = #{groupId}
+    </select>
+    <select id="getGroupByUserId" parameterType="java.util.Map" resultType="java.util.Map">
+	    SELECT
+			tg.id,
+			tg.groupName
+			,(SELECT count(0) FROM tb_group_user tgu WHERE tgu.groupId = tg.id) as userCount 
+		FROM
+			(
+				SELECT
+					tgu.id tid,
+					tgu.groupId tgrid
+				FROM
+					tb_group_user tgu,
+					tb_user tu
+				WHERE
+					tgu.userId = tu.id
+				AND tu.id = #{userId}
+			) t
+		LEFT JOIN tb_group tg ON tg.id = t.tgrid
+<!--     	select *  -->
+<!--     	from tb_group_user  -->
+<!--     	where groupId = #{groupId} -->
+    </select>
+    <select id="getGroupById"  parameterType="java.util.Map" resultType="java.util.Map">
+    	select 
+    	tg.* 
+    	from tb_group tg
+    	where 1 = 1
+    	and tg.id = #{groupId}
+    </select>
+	<!--     检测群组成员是否存在 -->
+	<select id="checkGroupUserIsExist" parameterType = "java.util.Map" resultType = "java.lang.Integer" >
+	SELECT count(tgu.id) FROM tb_group_user tgu WHERE tgu.groupId = #{groupId} AND userId = #{userId}
+	</select>
+	<!--     创建群组 -->
+	<insert id="addGroup" parameterType = "java.util.Map">
+		insert into tb_group(groupName) values (#{groupName})
+	</insert>
+	<!-- 	删除群组 -->
+	<delete id="deleteGroup" parameterType = "java.util.Map">
+		delete form tb_group where id = #{groupId}
+	</delete>
+	<!-- 	添加群组成员 -->
+	<insert id="addGroupUser" parameterType = "java.util.Map" >
+		insert into tb_group_user(groupId,userId) 
+	    <foreach collection="list" item="userId"  index="index" separator="union all">  
+	     select #{groupId},#{userId} from dual  
+	    </foreach> 
+	</insert>
+	<!-- 	删除群组成员 -->
+	<delete id="deleteGroupUser" parameterType = "java.util.Map">
+		delete from tb_group_user where groupId = #{groupId} and userId = #{userId}
+	</delete>
+	<!-- 	删除群组的所有成员 -->
+	<delete id="deleteAllGroupUserByGroupId" parameterType ="java.util.Map">
+		delete from tb_group_user where groupId = #{groupId}
+	</delete>
+	<!-- 	根据群组id查询所有的用户列表 -->
+	<select id="getAllUserByGroupId" parameterType = "java.util.Map" resultType = "java.util.Map">
+	select * ,
+	CASE WHEN ( 
+	   SELECT count(*)
+	   FROM tb_group_user tgu 
+	   WHERE tgu.groupId = #{groupId}
+		 AND tgu.userId = tu.id
+	) > 0 THEN 1 ELSE 0 END as isJoin
+	FROM tb_user tu 
+	WHERE 1 = 1
+	ORDER BY tu.id DESC
+	</select>
+</mapper>

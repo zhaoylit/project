@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zkkj.backend.dao.mybatis.mapper.biz.ZkkjUserMapper" >
+  <resultMap id="BaseResultMap" type="com.zkkj.backend.entity.biz.ZkkjUser" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="account" property="account" jdbcType="VARCHAR" />
+    <result column="passWord" property="passWord" jdbcType="VARCHAR" />
+    <result column="email" property="email" jdbcType="VARCHAR" />
+    <result column="weixin" property="weixin" jdbcType="VARCHAR" />
+    <result column="phone" property="phone" jdbcType="VARCHAR" />
+    <result column="nickName" property="nickName" jdbcType="VARCHAR" />
+    <result column="userStatus" property="userStatus" jdbcType="VARCHAR" />
+    <result column="org" property="org" jdbcType="VARCHAR" />
+    <result column="airport" property="airport" jdbcType="VARCHAR" />
+    <result column="city" property="city" jdbcType="VARCHAR" />
+    <result column="province" property="province" jdbcType="VARCHAR" />
+    <result column="street" property="street" jdbcType="VARCHAR" />
+    <result column="realName" property="realName" jdbcType="VARCHAR" />
+    <result column="airportName" property="airportName" jdbcType="VARCHAR" />
+    <result column="airlineName" property="airlineName" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, account, passWord, email, weixin, phone, nickName, userStatus, org, airport, 
+    city, province, street, realName, airportName, airlineName ,userDeviceId
+  </sql>
+  <select id="queryBackendUserList" parameterType="com.zkkj.backend.entity.biz.ZkkjUser" resultMap="BaseResultMap">
+	   select 
+	    <include refid="Base_Column_List" />
+	    from zkkj_user
+	   <where>
+	     <if test="account!=null and account != ''" >
+	        account = #{account,jdbcType=VARCHAR}
+	     </if>
+         <if test="passWord!=null and passWord != ''" >
+	        and passWord = #{passWord,jdbcType=VARCHAR}
+	     </if>
+	   </where>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from zkkj_user
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from zkkj_user
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.zkkj.backend.entity.biz.ZkkjUser" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into zkkj_user (id, account, passWord, 
+      email, weixin, phone, 
+      nickName, userStatus, org, 
+      airport, city, province, 
+      street, realName, airportName, 
+      airlineName)
+    values (#{id,jdbcType=INTEGER}, #{account,jdbcType=VARCHAR}, #{passWord,jdbcType=VARCHAR}, 
+      #{email,jdbcType=VARCHAR}, #{weixin,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, 
+      #{nickName,jdbcType=VARCHAR}, #{userStatus,jdbcType=VARCHAR}, #{org,jdbcType=VARCHAR}, 
+      #{airport,jdbcType=VARCHAR}, #{city,jdbcType=VARCHAR}, #{province,jdbcType=VARCHAR}, 
+      #{street,jdbcType=VARCHAR}, #{realName,jdbcType=VARCHAR}, #{airportName,jdbcType=VARCHAR}, 
+      #{airlineName,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.zkkj.backend.entity.biz.ZkkjUser" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into zkkj_user
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      id,
+      <if test="account != null" >
+        account,
+      </if>
+      <if test="passWord != null" >
+        passWord,
+      </if>
+      <if test="email != null" >
+        email,
+      </if>
+      <if test="weixin != null" >
+        weixin,
+      </if>
+      <if test="phone != null" >
+        phone,
+      </if>
+      <if test="nickName != null" >
+        nickName,
+      </if>
+      <if test="userStatus != null" >
+        userStatus,
+      </if>
+      <if test="org != null" >
+        org,
+      </if>
+      <if test="airport != null" >
+        airport,
+      </if>
+      <if test="city != null" >
+        city,
+      </if>
+      <if test="province != null" >
+        province,
+      </if>
+      <if test="street != null" >
+        street,
+      </if>
+      <if test="realName != null" >
+        realName,
+      </if>
+      <if test="airportName != null" >
+        airportName,
+      </if>
+      <if test="airlineName != null" >
+        airlineName,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      #{id,jdbcType=INTEGER},
+      <if test="account != null" >
+        #{account,jdbcType=VARCHAR},
+      </if>
+      <if test="passWord != null" >
+        #{passWord,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null" >
+        #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="weixin != null" >
+        #{weixin,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null" >
+        #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="nickName != null" >
+        #{nickName,jdbcType=VARCHAR},
+      </if>
+      <if test="userStatus != null" >
+        #{userStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="org != null" >
+        #{org,jdbcType=VARCHAR},
+      </if>
+      <if test="airport != null" >
+        #{airport,jdbcType=VARCHAR},
+      </if>
+      <if test="city != null" >
+        #{city,jdbcType=VARCHAR},
+      </if>
+      <if test="province != null" >
+        #{province,jdbcType=VARCHAR},
+      </if>
+      <if test="street != null" >
+        #{street,jdbcType=VARCHAR},
+      </if>
+      <if test="realName != null" >
+        #{realName,jdbcType=VARCHAR},
+      </if>
+      <if test="airportName != null" >
+        #{airportName,jdbcType=VARCHAR},
+      </if>
+      <if test="airlineName != null" >
+        #{airlineName,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zkkj.backend.entity.biz.ZkkjUser" >
+    update zkkj_user
+    <set >
+      <if test="account != null" >
+        account = #{account,jdbcType=VARCHAR},
+      </if>
+      <if test="passWord != null" >
+        passWord = #{passWord,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null" >
+        email = #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="weixin != null" >
+        weixin = #{weixin,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null" >
+        phone = #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="nickName != null" >
+        nickName = #{nickName,jdbcType=VARCHAR},
+      </if>
+      <if test="userStatus != null" >
+        userStatus = #{userStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="org != null" >
+        org = #{org,jdbcType=VARCHAR},
+      </if>
+      <if test="airport != null" >
+        airport = #{airport,jdbcType=VARCHAR},
+      </if>
+      <if test="city != null" >
+        city = #{city,jdbcType=VARCHAR},
+      </if>
+      <if test="province != null" >
+        province = #{province,jdbcType=VARCHAR},
+      </if>
+      <if test="street != null" >
+        street = #{street,jdbcType=VARCHAR},
+      </if>
+      <if test="realName != null" >
+        realName = #{realName,jdbcType=VARCHAR},
+      </if>
+      <if test="airportName != null" >
+        airportName = #{airportName,jdbcType=VARCHAR},
+      </if>
+      <if test="airlineName != null" >
+        airlineName = #{airlineName,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zkkj.backend.entity.biz.ZkkjUser" >
+    update zkkj_user
+    set account = #{account,jdbcType=VARCHAR},
+      passWord = #{passWord,jdbcType=VARCHAR},
+      email = #{email,jdbcType=VARCHAR},
+      weixin = #{weixin,jdbcType=VARCHAR},
+      phone = #{phone,jdbcType=VARCHAR},
+      nickName = #{nickName,jdbcType=VARCHAR},
+      userStatus = #{userStatus,jdbcType=VARCHAR},
+      org = #{org,jdbcType=VARCHAR},
+      airport = #{airport,jdbcType=VARCHAR},
+      city = #{city,jdbcType=VARCHAR},
+      province = #{province,jdbcType=VARCHAR},
+      street = #{street,jdbcType=VARCHAR},
+      realName = #{realName,jdbcType=VARCHAR},
+      airportName = #{airportName,jdbcType=VARCHAR},
+      airlineName = #{airlineName,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <insert id="insertUserRole" parameterType="map" >
+    INSERT INTO authority_user_role (
+		operatorId,
+		roleId,
+		addedTime
+	)
+	VALUES
+	(
+		#{operatorId},
+		#{roleId},
+		now()
+	)    
+  </insert>
+  
+   <delete id="removeOwnedRole" parameterType="map" >
+		delete from authority_user_role
+		where operatorId =#{operatorId} and roleId=#{roleId}
+  </delete>
+  
+</mapper>

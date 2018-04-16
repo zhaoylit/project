@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zj.web.modules.goods.dao.GoodsMapper" >
+  <!-- <cache readOnly="true">
+    <property name="timeToIdleSeconds" value="36000"/>  
+    <property name="timeToLiveSeconds" value="36000"/>
+    <property name="maxEntriesLocalHeap" value="1000"/>  
+    <property name="maxEntriesLocalDisk" value="10000000"/>  
+    <property name="memoryStoreEvictionPolicy" value="LRU"/>  
+   </cache> -->
+  <!--    查询列表 -->
+  <select id="selectList" resultType="java.util.Map" parameterType="java.util.Map">
+    SELECT ag.*
+    ,CASE 
+    	WHEN ag.status = '1' THEN '有效'
+    	WHEN ag.status = '0' THEN '无效'
+    END AS statusShow
+    ,date_format(ag.addedTime,'%Y-%m-%d %H:%i:%s') as addedTimeShow
+    ,date_format(ag.updateTime,'%Y-%m-%d %H:%i:%s') as updateTimeShow
+    ,agc.`name` as categoryName
+    ,ab.shopName
+    ,(SELECT GROUP_CONCAT(agc.serviceName) FROM app_goods_services agc WHERE FIND_IN_SET(agc.id,ag.service) > 0) as serviceName
+    FROM app_goods ag
+    LEFT JOIN app_goods_category agc ON ag.categoryId = agc.id
+    LEFT JOIN app_shop ab ON ab.id = ag.shopId
+    WHERE ag.`status` = 1
+    ORDER BY ag.addedTime DESC
+  </select>
+  <!--   查询列表数量 -->
+  <select id="selectCount" parameterType ="java.util.Map" resultType="java.lang.Integer">
+    SELECT count(*)
+    FROM app_goods ag
+    WHERE ag.`status` = 1
+  </select>
+  <!--   单条 -->
+  <select id="selectOne" parameterType="java.util.Map" resultType="java.util.Map">
+  SELECT ag.*
+    ,CASE 
+    	WHEN ag.status = '1' THEN '有效'
+    	WHEN ag.status = '0' THEN '无效'
+    END AS statusShow
+    ,date_format(ag.addedTime,'%Y-%m-%d %H:%i:%s') as addedTimeShow
+    ,date_format(ag.updateTime,'%Y-%m-%d %H:%i:%s') as updateTimeShow
+    ,agc.`name` as categoryName
+    ,ab.shopName
+    ,(SELECT GROUP_CONCAT(agc.serviceName) FROM app_goods_services agc WHERE FIND_IN_SET(agc.id,ag.service) > 0) as serviceName
+    FROM app_goods ag
+    LEFT JOIN app_goods_category agc ON ag.categoryId = agc.id
+    LEFT JOIN app_shop ab ON ab.id = ag.shopId
+    WHERE ag.`status` = 1
+    <if test="id != null and id != ''">
+     and ag.id = #{id}
+    </if>
+  </select>
+  <!-- 添加 -->
+  <insert id="insert" parameterType="java.util.Map"  useGeneratedKeys="true" keyProperty="id">
+    insert into app_goods (shopId, spiritDescribe, 
+      goodsName, categoryId, total, 
+      remain, addedTime, orgPrice, 
+      discountPrice, service)
+    values ( #{shopId,jdbcType=INTEGER}, #{spiritDescribe,jdbcType=VARCHAR}, 
+      #{goodsName,jdbcType=VARCHAR}, #{categoryId,jdbcType=INTEGER}, #{total,jdbcType=INTEGER}, 
+      #{remain,jdbcType=INTEGER}, now(), #{orgPrice,jdbcType=DECIMAL}, 
+      #{discountPrice,jdbcType=DECIMAL}, #{service,jdbcType=VARCHAR}
+      )
+  </insert>
+ <!--   更新 -->
+ <update id="updateByPrimaryKeySelective" parameterType="java.util.Map" >
+    update app_goods
+    <set >
+      <if test="shopId != null" >
+        shopId = #{shopId,jdbcType=INTEGER},
+      </if>
+      <if test="spiritDescribe != null" >
+        spiritDescribe = #{spiritDescribe,jdbcType=VARCHAR},
+      </if>
+      <if test="goodsName != null" >
+        goodsName = #{goodsName,jdbcType=VARCHAR},
+      </if>
+      <if test="categoryId != null" >
+        categoryId = #{categoryId,jdbcType=INTEGER},
+      </if>
+      <if test="total != null" >
+        total = #{total,jdbcType=INTEGER},
+      </if>
+      <if test="remain != null" >
+        remain = #{remain,jdbcType=INTEGER},
+      </if>
+      <if test="addedTime != null" >
+        addedTime = #{addedTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="orgPrice != null" >
+        orgPrice = #{orgPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="discountPrice != null" >
+        discountPrice = #{discountPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="service != null" >
+        service = #{service,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      updateTime = now(),
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <!--   删除 -->
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    update app_goods set status = 0
+    where id in 
+    <foreach collection="array" open="(" separator="," close=")" item="id">
+    	#{id}
+    </foreach>
+  </delete>
+</mapper>

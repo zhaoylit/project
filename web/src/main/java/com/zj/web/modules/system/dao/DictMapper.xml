@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zj.web.modules.system.dao.DictMapper" >
+  <select id="getDictList" resultType="java.util.Map" parameterType="java.util.Map">
+    select td.* 
+    from tb_system_dict td
+    where 1 = 1
+    <if test="dictKey != null and dictKey != ''">
+    and td.dictKey = '${dictKey}'
+    </if>
+  </select>
+</mapper>

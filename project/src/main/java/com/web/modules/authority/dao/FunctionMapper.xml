@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.web.modules.authority.dao.FunctionMapper" >
+  <select id="getAllFuns" resultType="java.util.Map">
+    SELECT
+		taf.*
+		,CASE WHEN taf.funOrder = 1 THEN
+		 IFNULL((select taf_.funName from tb_auth_function taf_ where taf_.id = taf.pid),'根节点')
+		 ELSE
+		    IFNULL((
+			   SELECT taf_.funName FROM tb_auth_function taf_ 
+			   WHERE taf_.pid = taf.pid 
+			   AND taf_.funOrder =  (taf.funOrder - 1)
+			   LIMIT 1
+			  ),'根节点')
+		 END as preNodeName
+	FROM
+		tb_auth_function taf
+	WHERE 1 = 1
+	ORDER BY taf.funOrder ASC
+  </select>
+  <select id="getCurAndNextOneNode" parameterType="java.util.Map" resultType="java.util.Map">
+   select t.* from (
+	   	SELECT taf.* FROM tb_auth_function  taf
+		WHERE 1 = 1 
+		AND  (
+			taf.id = #{id}
+			OR taf.pid = #{id}
+		)
+		<if test="curId != null and curId != ''">
+		AND id != #{curId}
+		</if>
+   ) t order by t.funOrder asc
+  </select>
+  <select id="selectByUrl" parameterType="java.lang.String" resultType="java.util.Map">
+   SELECT * FROM tb_auth_function  taf
+	WHERE 1 = 1 
+	AND taf.funUrl = #{funUrl}
+  </select>
+  <select id="selectBypId" parameterType="java.lang.Integer" resultType="java.util.Map">
+   SELECT * FROM tb_auth_function  taf
+	WHERE 1 = 1 
+	AND taf.pid = #{pid}
+	order by funOrder asc
+  </select>
+  <select id="selectById" parameterType="java.lang.Integer" resultType="java.util.Map">
+     SELECT *,
+	taf.pid as parentId
+	,CASE WHEN taf.pid = 0 THEN -1
+	ELSE
+	(SELECT taf1_.pid FROM tb_auth_function taf1_ WHERE taf1_.id = taf.pid)
+	END as parentPid
+	,
+	 CASE WHEN taf.funOrder = 1 THEN
+	 taf.pid
+	 ELSE
+	    IFNULL((
+		   SELECT taf_.id FROM tb_auth_function taf_ 
+		   WHERE taf_.pid = taf.pid 
+		   AND taf_.funOrder =  (taf.funOrder - 1)
+		   LIMIT 1
+		  ),0)
+	 END as preNodeId
+	 FROM tb_auth_function  taf
+	 WHERE 1 = 1 
+	AND taf.id = #{id}
+  </select>
+ <insert id="insert" parameterType="java.util.Map">
+ insert into tb_auth_function(pid,funName,funUrl,isGroup,iconCls,funOrder)
+ values(#{pid},#{funName},#{funUrl},#{isGroup},#{iconCls},#{funOrder})
+ </insert>
+ <update id="updateById" parameterType="java.util.Map">
+ update tb_auth_function
+ set id = id 
+ <if test="pid != null and pid != ''">
+ ,pid = #{pid}
+ </if>
+ <if test="funUrl != null and funUrl != ''">
+ ,funUrl = #{funUrl}
+ </if>
+ <if test="funName != null and funName != ''">
+ ,funName = #{funName}
+ </if>
+ <if test="isGroup != null and isGroup != ''">
+ ,isGroup = #{isGroup}		
+ </if>
+ <if test="iconCls != null and iconCls != ''">
+ ,iconCls = #{iconCls}
+ </if>
+ <if test="funOrder != null and funOrder != ''">
+ ,funOrder = #{funOrder}
+ </if>
+ where id = #{id,jdbcType=INTEGER}
+ </update>
+ <delete id="deleteAllChildrenNodebyId" parameterType="java.lang.Integer">
+ delete from tb_auth_function where find_in_set(id,getFunChildrensList(#{id})) > 0
+ </delete>
+</mapper>

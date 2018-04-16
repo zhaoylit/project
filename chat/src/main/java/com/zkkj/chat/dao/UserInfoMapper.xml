@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="userInfo" >
+	<!-- 	查询广告商列表 -->
+    <select id="getUserList"  parameterType="java.util.Map" resultType="java.util.Map">
+    	select 
+    	* 
+    	from tb_user
+    	where 1 = 1
+    	<if test="account != null and account != ''">
+    	and account = #{account}
+    	</if>
+    	<if test="nickName != null and nickName != ''">
+    	and nickName = #{nickName}
+    	</if>
+    	<if test="password != null and password != ''">
+    	and password = md5(#{password})
+    	</if>
+    	<if test="onlineStatus != null and onlineStatus != ''">
+    	and onlineStatus = #{onlineStatus}
+    	</if>
+    </select>
+    <select id="selectUserById" parameterType="java.util.Map" resultType="java.util.Map">
+    	select * from tb_user
+    	where id = #{userId}
+    </select>
+	<!--     添加用户信息 -->
+    <insert id="addUser"   parameterType="java.util.Map"  useGeneratedKeys="true" keyProperty="id">
+    	insert into tb_user(account,password,nickName,headUrl)
+    	values (#{account},#{password},#{nickName},#{headUrl})
+    </insert>
+	<!--     更新用户信息 -->
+    <update id="updateUser" parameterType="java.util.Map">
+    	update tb_user 
+    	<set >
+	      <if test="nickName != null and nickName != ''" >
+	        nickName = #{nickName,jdbcType=VARCHAR},
+	      </if>
+	      <if test="onlineStatus != null  and onlineStatus != ''">
+	        onlineStatus = #{onlineStatus},
+	      </if>
+	      <if test="password != null  and password != ''">
+	        password = #{password},
+	      </if>
+	    </set>
+    	where id = #{userId}
+    </update>
+	<!--     删除用户 -->
+    <delete id="deleteUser" parameterType ="java.util.Map">
+    	delete from tb_user where  id = #{userId}
+    </delete>
+</mapper>

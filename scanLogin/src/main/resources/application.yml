@@ -1,0 +1,15 @@
+spring:  
+    profiles:  
+        active: dev 
+    thymeleaf:
+        cache: false
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.zyl.scan.model
+
+#pagehelper分页插件
+pagehelper:
+    helperDialect: mysql
+    reasonable: true
+    supportMethodsArguments: true
+    params: count=countSql

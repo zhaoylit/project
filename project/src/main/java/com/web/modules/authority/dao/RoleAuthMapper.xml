@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.web.modules.authority.dao.RoleAuthMapper" >
+ <select id="getFunctionsByRoleId" resultType="java.util.Map" parameterType="java.lang.Integer" >
+    SELECT
+		  tarf.roleId,tarf.funId,taf.funName,taf.funUrl,taf.iconCls
+	FROM  tb_auth_role_function tarf,
+		  tb_auth_function taf
+	WHERE tarf.roleId = #{roleId,jdbcType=INTEGER}
+	AND   tarf.funId = taf.id
+	<if test="funUrl != null and funUrl != ''" >
+    AND taf.funUrl = #{funUrl}
+    </if>
+  </select>
+  <!--   查询所有的功能 -->
+  <select id="getAllFunctions" parameterType="java.lang.Integer" resultType="java.util.Map">
+  	SELECT taf.*,taf.funName as text
+		,CASE WHEN tarf.funId IS NOT NULL AND tarf.funId != '' THEN 1 ELSE 0 END AS checked
+		FROM tb_auth_function taf
+	LEFT JOIN tb_auth_role_function tarf 
+		ON tarf.funId = taf.id 
+		AND tarf.roleId = #{roleId,jdbcType=INTEGER}
+	ORDER BY taf.funOrder ASC
+  </select>
+  <!--   根据角色查询菜单 -->
+  <select id="selectMenuByRole" parameterType="java.lang.Integer"  resultType="java.util.Map">
+  		SELECT tt.*,taf.funUrl,taf.funName FROM (
+	  		SELECT DISTINCT(tamf.id),tamf.pid,tamf.funId,tamf.menuName
+	    	  ,tamf.isGroup,tamf.menuOrder,tamf.iconCls
+	  		FROM tb_auth_menu_function tamf
+	  				,(
+	  					<choose>
+	  						<when test="roleId != 0">
+	  							SELECT t3.id
+			  					FROM  
+			  							tb_auth_role_function t1,
+			  							tb_auth_function t2,
+			  							tb_auth_menu_function t3,
+			  							tb_auth_role t4	
+			  					WHERE t1.funId = t2.id 
+			  							AND  t2.id = t3.funId
+			  							AND t1.roleId = t4.id
+		  								AND t1.roleId = #{roleId}
+		  								AND t4.roleStatus = 1
+	  						</when>
+	  						<otherwise>
+	  							SELECT t3.id
+	  							FROM tb_auth_menu_function t3
+	  						</otherwise>
+	  					</choose>
+	  				) m
+	  		WHERE FIND_IN_SET(tamf.id,getMenuParentList(m.id)) > 0
+	  ) tt
+	  LEFT JOIN tb_auth_function taf ON taf.id = tt.funId
+	  ORDER BY tt.menuOrder ASC
+  </select>
+  <!--   查询角色列表 -->
+  <select id="getRoleList" parameterType="java.util.Map" resultType="java.util.Map">
+  	SELECT *
+  	FROM tb_auth_role
+  	WHERE 1 = 1
+  	<if test="roleId != null and roleId != ''">
+  	AND id = #{roleId}
+  	</if>
+  </select>
+  <!--   查询角色数量 -->
+  <select id="getRoleListCount" parameterType="java.util.Map" resultType="java.lang.Integer">
+  	SELECT count(0)
+  	FROM tb_auth_role
+  	WHERE 1 = 1
+  	<if test="roleId != null and roleId != ''">
+  	AND id = #{roleId}
+  	</if>
+  </select>
+  <!--    添加角色 -->
+  <insert id="addRole" parameterType="java.util.Map">
+	 INSERT INTO tb_auth_role (
+		roleName,
+		roleDes,
+		roleStatus
+		)
+	VALUES
+		(
+			#{roleName},
+			#{roleDes},
+			#{roleStatus}
+		)
+  </insert>
+  <!--   根据角色id更新角色 -->
+  <update id="updateRoleById" parameterType="java.util.Map">
+  	UPDATE tb_auth_role
+	SET
+	 roleName = #{roleName},
+	 roleDes = #{roleDes},
+	 roleStatus = #{roleStatus}
+	WHERE id = #{roleId}
+  </update>
+  <!--   根据角色id删除角色 -->
+  <delete id="deleteRoleById" parameterType="java.lang.Integer">
+  	delete from tb_auth_role where id = #{roleId}
+  </delete>
+  <!--   根据角色id删除角色对应的全部权限 -->
+  <delete id="deleteAuthByRoleId"  parameterType="java.lang.String">
+  	delete from tb_auth_role_function where find_in_set(roleId,#{roleId}) > 0
+  </delete>
+  
+  <!--   添加角色权限-->
+  <insert id="addRoleAuth" parameterType="java.util.Map">
+  	 INSERT INTO tb_auth_role_function(roleId,funId)
+  	 VALUES (#{roleId},#{funId})
+  </insert>
+  <!--   根据角色id查询不在选择的权限列表 -->
+  <select id="getRoleAuthNotInSelect" parameterType="java.util.Map" resultType="java.lang.String">
+    SELECT GROUP_CONCAT(id) 
+   	FROM tb_auth_role_function
+  	WHERE roleId = #{roleId}
+  	AND FIND_IN_SET(funId,#{funIds}) = 0
+  </select>
+  <!--   根据角色删除不在选择的角色列表 -->
+  <delete id="deleteRoleAuthNotInSelect" parameterType="java.lang.String">
+    DELETE FROM tb_auth_role_function 
+    WHERE find_in_set(funId,#{ids}) > 0
+  </delete>
+</mapper>

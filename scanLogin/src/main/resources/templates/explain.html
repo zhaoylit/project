@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Title</title>
+    <meta charset="UTF-8"/>  
+    <style type="text/css">
+    table{border:1px solid black;border-right:0px;}
+    td{padding:5px; border-right:1px solid black;text-align:left;border-top:1px solid black;}
+    </style>
+    <script type="text/javascript" src="/js/jquery-1.11.1.min.js"></script>
+</head>
+<body>
+	<textarea style="width:100%;height:800px;">
+	
+	http://192.168.224.1:8888/open_db
+    GET
+    user_id 用户id
+    date_s  时间字符串 ("20180101")
+    sql 查询sql ("select * from info limit 10;")
+    instance 身份标识, 取值随意, 用于表名身份及fetch结果数据
+    fetch_all 是否获取全部数据，为0则只执行sql不返回数据, 为1则返回所有执行结果(慎用)
+	返回值:
+    err_msg: 错误字符串, 为空表示无错误
+    cols: 返回结果的列名
+    data: 返回的数据列表(如果fetch_all为1)
+    {
+        "err_msg": "",
+        "data":[["1", "2", "3", ...], [...]]
+        "cols": [
+            "id",
+            "config_id",
+            "url",
+            "source",
+            "title",
+            "summary",
+            "content",
+            "info_flag",
+            "siteName",
+            "site_domain",
+            "visitCount",
+            "replyCount",
+            "negative",
+            "is_filtered",
+            "ctime",
+            "gtime",
+            "dtime",
+            "ltime",
+            "delete_flag"
+        ]
+    }
+
+	http://192.168.224.1:8888/fetch
+    GET
+    instance open_db时使用的instance
+    fetch_count 获取数据的条数, 非必传, 默认值为1
+	返回值:
+    err_msg: 错误字符串, 为空表示无错误
+    cols: 返回结果的列名
+    is_done: 是否结束, 1表示已结束, 2表示还有未获取的数据
+    data: 返回的数据列表
+    {
+        "err_msg": "",
+        "is_done":1,
+        "data":[["1", "2", "3", ...], [...]]
+        "cols": [
+            "id",
+            "config_id",
+            "url",原文链接
+            "source",来源
+            "title",标题 
+            "summary",摘要
+            "content",内容
+            "info_flag",
+            "siteName",站点名称
+            "site_domain",
+            "visitCount",浏览次数
+            "replyCount",回复数量
+            "negative",  大于0 正面。=0中性, 小于0负面
+            "is_filtered",
+            "ctime",发布时间
+            "gtime",采集时间
+            "dtime",入库时间戳
+            "ltime",入库时间字符串
+            "delete_flag"
+        ]
+    }
+
+
+	数据表结构如下:
+	CREATE TABLE info (id integer  NOT NULL ON CONFLICT FAIL  primary key autoincrement,
+	                                    config_id text,
+	                                    url text  NOT NULL ON CONFLICT FAIL ,
+	                                    source text,
+	                                    title text,
+	                                    summary text,
+	                                    content text,
+	                                    info_flag text,
+	                                    siteName text,
+	                                    site_domain text,
+	                                    visitCount integer,
+	                                    replyCount integer,
+	
+	                                    negative integer,
+	                                    is_filtered integer,
+	
+	                                    ctime integer,
+	                                    gtime integer,
+										dtime integer,
+	                                    ltime text,
+	                                    delete_flag integer );
+	
+	CREATE TABLE subject (id integer  NOT NULL ON CONFLICT FAIL  primary key autoincrement,
+	                                    url text  NOT NULL ON CONFLICT FAIL ,
+	                                    subject_id text,专题id
+	                                    subject_type text, 专题分类
+	                                    delete_flag integer,
+	          
+	                          match_words text );  //匹配的关键词
+							  
+	样例sql1:
+	select * from info limit 10;
+	样例sql2:
+	select title,source,info.url 
+	,datetime(ctime,'unixepoch','localtime') as ctime 
+	,case when negative 大于 0 then '正面' when negative = 0 then '中性' when negative 小于 0 then '负面' end as orientation 
+	from info 
+	left join `subject` on info.url = `subject`.url 
+	where `subject`.subject_id = '8a7a4172700845b9b5cae09a8ea88872'
+	and (negative 小于0 or negative 大于 0);
+	
+	
+	
+									
+	根据url截取站点名称：
+	substr(url,instr(url,'://') + 3, instr(replace(url,'://',''),'/') - instr(url,'://'))  AS name
+	日期格式化成字符串：
+	datetime(gtime,'unixepoch','localtime') as gtime
+	
+	String titleArray[] = new String[]{"标题","来源","倾向性","要闻连接","浏览数","回复数","关键词","媒体类别","发布时间","抓取时间","字数","摘要"};
+	String columnArray[] = new String[]{"title","source","orientation","url","visitCount","replyCount","match_words","siteName","ctime","gtime","len","summary"};
+	</textarea>
+</body>
+</html>

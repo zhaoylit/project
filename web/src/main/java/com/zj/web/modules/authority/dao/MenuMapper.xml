@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zj.web.modules.authority.dao.MenuMapper" >
+  <select id="getAllMenus" resultType="java.util.Map">
+    SELECT
+		tamf.*,taf.funUrl,taf.funName
+		,CASE WHEN tamf.menuOrder = 1 THEN
+		 IFNULL((select tamf_.menuName from tb_auth_menu_function tamf_ where tamf_.id = tamf.pid),'根节点')
+		 ELSE
+		    IFNULL((
+			   SELECT tamf_.menuName FROM tb_auth_menu_function tamf_ 
+			   WHERE tamf_.pid = tamf.pid 
+			   AND tamf_.menuOrder =  (tamf.menuOrder - 1)
+			   LIMIT 1
+			  ),'根节点')
+		 END as preNodeName
+	FROM
+		tb_auth_menu_function tamf
+		left join tb_auth_function taf on taf.id = tamf.funId
+	WHERE 1 = 1
+	ORDER BY tamf.menuOrder ASC
+  </select>
+  <select id="getCurAndNextOneNode" parameterType="java.util.Map" resultType="java.util.Map">
+   select t.* from (
+	   	SELECT tamf.* FROM tb_auth_menu_function  tamf
+		WHERE 1 = 1 
+		AND  (
+			tamf.id = #{id}
+			OR tamf.pid = #{id}
+		)
+		<if test="curId != null and curId != ''">
+		AND id != #{curId}
+		</if>
+   ) t order by t.menuOrder asc
+  </select>
+  <select id="selectBypId" parameterType="java.lang.Integer" resultType="java.util.Map">
+   SELECT * FROM tb_auth_menu_function  tamf
+	WHERE 1 = 1 
+	AND tamf.pid = #{pid}
+	order by menuOrder asc
+  </select>
+  <select id="selectById" parameterType="java.lang.Integer" resultType="java.util.Map">
+     SELECT *,
+	tamf.pid as parentId
+	,CASE WHEN tamf.pid = 0 THEN -1
+	ELSE
+	(SELECT tamf1_.pid FROM tb_auth_menu_function tamf1_ WHERE tamf1_.id = tamf.pid)
+	END as parentPid
+	,
+	 CASE WHEN tamf.menuOrder = 1 THEN
+	 tamf.pid
+	 ELSE
+	    IFNULL((
+		   SELECT tamf_.id FROM tb_auth_menu_function tamf_ 
+		   WHERE tamf_.pid = tamf.pid 
+		   AND tamf_.menuOrder =  (tamf.menuOrder - 1)
+		   LIMIT 1
+		  ),0)
+	 END as preNodeId
+	 FROM tb_auth_menu_function  tamf
+	 WHERE 1 = 1 
+	AND tamf.id = #{id}
+  </select>
+ <delete id="deleteAllChildrenNodebyId" parameterType="java.lang.Integer">
+ delete from tb_auth_menu_function where find_in_set(id,getMenuChildrensList(#{id})) > 0
+ </delete>
+ <insert id="insert" parameterType="java.util.Map">
+ insert into tb_auth_menu_function(pid,menuName,funId,isGroup,iconCls,menuOrder)
+ values(#{pid},#{menuName},#{funId},#{isGroup},#{iconCls},#{menuOrder})
+ </insert>
+ <update id="updateById" parameterType="java.util.Map">
+ update tb_auth_menu_function
+ set id = id 
+ <if test="pid != null and pid != ''">
+ ,pid = #{pid}
+ </if>
+ <if test="funId != null and funId != ''">
+ ,funId = #{funId}
+ </if>
+ <if test="menuName != null and menuName != ''">
+ ,menuName = #{menuName}
+ </if>
+ <if test="isGroup != null and isGroup != ''">
+ ,isGroup = #{isGroup}		
+ </if>
+ <if test="iconCls != null and iconCls != ''">
+ ,iconCls = #{iconCls}
+ </if>
+ <if test="menuOrder != null and menuOrder != ''">
+ ,menuOrder = #{menuOrder}
+ </if>
+ where id = #{id,jdbcType=INTEGER}
+ </update>
+</mapper>
